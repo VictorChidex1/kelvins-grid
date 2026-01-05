@@ -1,0 +1,42 @@
+/* 1. Import The Deep Grid Fonts */
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    /* Global Reset: Midnight Navy BG, Signal White Text */
+    @apply bg-brand-950 text-slate-50 font-sans antialiased selection:bg-action selection:text-brand-950;
+  }
+
+  /* All Headings use Space Grotesk */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* Utility for subtle background grids */
+  .bg-grid-subtle {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
+      linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, transparent, black, transparent);
+  }
+
+  /* Glassmorphism for Sticky Headers */
+  .glass-panel {
+    @apply bg-brand-900/80 backdrop-blur-md border-b border-brand-800;
+  }
+}
