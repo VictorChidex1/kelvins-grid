@@ -1,5 +1,6 @@
 import { ProductCard } from "./components/ui/ProductCard";
 import type { Product } from "./types";
+import { Navbar } from "./components/Navbar";
 
 function App() {
   const sampleProduct: Product = {
@@ -21,12 +22,14 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-brand-950">
+      <Navbar />
+
       {/* Background Grid Effect */}
       <div className="absolute inset-0 bg-grid-subtle opacity-20 pointer-events-none" />
 
-      {/* Main Container */}
-      <main className="relative z-10 max-w-5xl w-full grid md:grid-cols-2 gap-12 items-center">
+      {/* Main Container - Added padding top for fixed navbar */}
+      <main className="relative z-10 max-w-5xl w-full grid md:grid-cols-2 gap-12 items-center px-6 pt-24 pb-12">
         {/* Left Column: Typography & Brand Identity */}
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-900 border border-brand-800">
