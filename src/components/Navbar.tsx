@@ -6,6 +6,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Services", href: "#services" },
     { name: "Portfolio", href: "#portfolio" },
+    { name: "About", href: "#about" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -15,9 +16,11 @@ export function Navbar() {
         <div className="glass-panel rounded-2xl px-6 py-3 flex items-center justify-between shadow-xl">
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-action rounded-md flex items-center justify-center font-bold text-brand-950">
-              K
-            </div>
+            <img
+              src="/kelvins-grid-logo.png"
+              alt="Kelvin's Grid Logo"
+              className="w-10 h-10 object-contain"
+            />
             <span className="font-heading font-bold text-xl tracking-tight text-white">
               KELVIN'S GRID
             </span>
