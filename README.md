@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# KELVIN'S GRID 2.0 ⚡️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Serverless Solar Utility Platform** for renewable energy management in Nigeria.
 
-Currently, two official plugins are available:
+![System Status](https://img.shields.io/badge/System-Operational-10B981) ![Stack](https://img.shields.io/badge/Stack-React%20%7C%20Vite%20%7C%20Firestore-orange)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📌 Abstract
 
-## React Compiler
+**KELVIN'S GRID** is a premium business application designed to facilitate the sale and management of solar inverter systems, Starlink installations, and CCTV security solutions. The platform is engineered for **speed** (client-side reads) and **security** (server-side writes) using a hybrid serverless architecture.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Tech Stack
 
-## Expanding the ESLint configuration
+- **Frontend:** React (Vite) + TypeScript
+- **Styling:** Tailwind CSS v3.4 ("Deep Grid" Design System)
+- **State:** Zustand (Data Caching)
+- **Backend:** Vercel Serverless Functions
+- **Database:** Google Cloud Firestore (NoSQL)
+- **Storage:** Firebase Storage
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🎨 Design System: "The Deep Grid"
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The UI is built on a custom palette engineered to feel industrial and premium:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Midnight Navy (`#020617`):** The deep background representing the grid before power restoration.
+- **Voltaic Amber (`#FFB800`):** Primary actions and energy highlights.
+- **Space Grotesk:** Technical headings.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- Firebase Project Credentials
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone <YOUR_REPO_URL>
+   cd kelvins-grid
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment:**
+   Create a `.env.local` file in the root:
+
+   ```env
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   ```
+
+4. **Run Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+## 🏗 Architecture
+
+- **Reads:** The frontend connects directly to Firestore for instant product loading using the Firebase Client SDK.
+- **Writes:** All administrative mutations (Price updates, Inventory) are routed through Next.js-style API routes (Vercel Functions) using `firebase-admin` for strict validation.
+
+## 📂 Project Structure
+
+```
+/src
+  /components/ui    # Reusable atoms (ProductCard, Buttons)
+  /lib              # Firebase initialization
+  /pages            # Route components
+  /store            # Zustand state stores
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+© 2024 Kelvin's Grid. Engineered for Reliability.
