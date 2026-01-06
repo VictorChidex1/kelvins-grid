@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Services } from "./pages/Services";
+import { ServicesSection } from "./components/ServicesSection";
+import { Seed } from "./pages/Seed";
 
 function App() {
   return (
@@ -17,8 +19,17 @@ function App() {
 
         <main className="relative z-10 w-full">
           <Routes>
-            <Route path="/" element={<Hero />} />
+            <Route
+              path="/"
+              element={
+                <>
+                  <Hero />
+                  <ServicesSection />
+                </>
+              }
+            />
             <Route path="/services" element={<Services />} />
+            <Route path="/seed" element={<Seed />} />
           </Routes>
         </main>
       </div>

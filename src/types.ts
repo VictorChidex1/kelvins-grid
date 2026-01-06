@@ -2,12 +2,19 @@ export interface Product {
   id: string;
   title: string;
   price: number;
-  priceWithPanels?: number;
   description: string;
-  category: "solar" | "starlink" | "cctv";
-  components: string[];
-  isFeatured: boolean;
-  // Additional fields for UI display that might be calculated or part of metadata later
+  category:
+    | "Bundles"
+    | "Batteries"
+    | "Panels"
+    | "Inverters"
+    | "solar"
+    | "starlink"
+    | "cctv"; // Expanded categories
+  components: string[]; // Was features in seed
+  isFeatured?: boolean;
   loadCapacity?: string;
   badge?: string;
+  imageUrl?: string;
+  stock?: number;
 }

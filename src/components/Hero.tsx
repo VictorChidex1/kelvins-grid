@@ -98,11 +98,7 @@ export function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.2 }}
             className="absolute bottom-4 right-6 hidden md:block"
-          >
-            <div className="font-mono text-[10px] text-slate-500 tracking-[0.2em]">
-              GRID_REF: KG-202X // LAT: 6.5244 // LNG: 3.3792
-            </div>
-          </motion.div>
+          ></motion.div>
         </div>
       </div>
 
@@ -238,7 +234,10 @@ export function Hero() {
           >
             <div className="flex justify-between items-start mb-5">
               <div>
-                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase bg-action text-brand-950 mb-2">
+                <span
+                  className="inline-block px-2 py-0.5 rounded text-[10px] font-bold tracking-widest uppercase
+                 bg-action text-brand-950 mb-2"
+                >
                   Best Seller
                 </span>
                 <h3 className="text-xl font-heading font-bold text-white">
@@ -296,7 +295,10 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="w-full py-3 bg-brand-800/50 hover:bg-action hover:text-brand-950 border border-brand-600 hover:border-action rounded-lg flex items-center justify-center gap-2 transition-all text-sm font-bold text-white group-hover:scale-[1.02]">
+            <div
+              className="w-full py-3 bg-brand-800/50 hover:bg-action hover:text-brand-950 border border-brand-600
+             hover:border-action rounded-lg flex items-center justify-center gap-2 transition-all text-sm font-bold text-white group-hover:scale-[1.02]"
+            >
               <span>View Technical Specs</span>
             </div>
           </div>
