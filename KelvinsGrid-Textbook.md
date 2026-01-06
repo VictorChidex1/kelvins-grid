@@ -362,4 +362,112 @@ We use `useState<User | null>(null)` to track the logged-in user.
 - **`User` object**: You are logged in, and we have your email/UID.
 
 **Why this matters:**
-We pause the entire app (`if (loading) return "Loading..."`) until Firebase tells us if you are logged in or not. This prevents the "Flash of Unauthenticated Content" bug where a user briefly sees the dashboard before being kicked out.
+
+### Lesson 3.4: The Authentication Context (`AuthContext.tsx`)
+
+**The Concept:**
+In React, data usually flows _down_ (Parent -> Child). But "User Login Status" is global. It needs to be everywhere (Navbar, Admin, Settings). Passing it down 10 levels is messy ("Prop Drilling").
+
+**The Solution:**
+We usage **React Context**, which acts like a "Teleporter." Any component inside the `AuthProvider` can grab the user data directly.
+
+**The Code:**
+
+```tsx
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }) {
+  // 1. The State
+  const [user, setUser] = useState<User | null>(null);
+
+  // 2. The Listener (Runs once on mount)
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe(); // Cleanup listener when app closes
+  }, []);
+
+  // 3. The Methods
+  const login = async (email, password) => {
+    await signInWithEmailAndPassword(auth, email, password);
+  };
+
+  // ... (signup, googleLogin, logout)
+
+  // 4. The Teleporter
+  return (
+    <AuthContext.Provider value={{ user, login, ... }}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
+```
+
+**Deep Dive:**
+
+- **`createContext`**: Creates the "channel" for our data.
+- **`children`**: This is a magic prop. It represents "Everything inside this component." By wrapping `<App>` with `<AuthProvider>`, `App` becomes the `children`.
+- **`!loading && children`**: We DO NOT render the app until we know if you are logged in or not. This is critical for preventing "flickering" states.
+
+### Lesson 3.5: The Custom Hook (`useAuth`)
+
+**The Problem:**
+To use context, you normally write `useContext(AuthContext)`. This is repetitive and generic.
+
+**The Solution:**
+We created a custom hook: `useAuth()`.
+
+**The Code:**
+
+```tsx
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+```
+
+**Why?**
+
+1.  **Safety:** It crashes nicely if you forget to wrap your app in the Provider.
+2.  **Cleanliness:** inside `Login.tsx`, we just type `const { login } = useAuth()`. Clean. Simple.
+
+### Lesson 3.6: The Signup Logic (Safety First)
+
+**The Concept:**
+Users make mistakes. We validated their input _before_ sending it to Firebase.
+
+**The Code (`Signup.tsx`):**
+
+```tsx
+if (password !== confirmPassword) {
+  return setError("Passwords do not match");
+}
+```
+
+**Password Visibility (The Eye Icon):**
+We used a simple boolean state toggle.
+
+```tsx
+<input type={showPassword ? "text" : "password"} />
+<button onClick={() => setShowPassword(!showPassword)}>
+   {/* Icon changes based on true/false */}
+</button>
+```
+
+- **Logic:** Changing the `type` attribute from "password" (bullets) to "text" (letters) instantly reveals the password.
+
+### Lesson 3.7: Google Initialisation
+
+To enable Google Login, we used the `GoogleAuthProvider`.
+
+```tsx
+const provider = new GoogleAuthProvider();
+await signInWithPopup(auth, provider);
+```
+
+- **`signInWithPopup`**: Opens that familiar "Choose your Google Account" window. It handles the tokens, keys, and security handshake automatically.

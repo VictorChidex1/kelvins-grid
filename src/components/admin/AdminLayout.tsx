@@ -1,28 +1,19 @@
-import { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut, type User } from "firebase/auth";
-import { auth } from "../../lib/firebase";
+import { useEffect } from "react";
 import { useNavigate, Outlet, Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export function AdminLayout() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
-        navigate("/login");
-      } else {
-        setUser(currentUser);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [navigate]);
+    if (!loading && !user) {
+      navigate("/login");
+    }
+  }, [user, loading, navigate]);
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await logout();
     navigate("/login");
   };
 

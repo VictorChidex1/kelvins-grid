@@ -1,8 +1,16 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   const navLinks = [
     { name: "Services", href: "/services" },
@@ -40,10 +48,38 @@ export function Navbar() {
           </div>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
-            <button className="bg-brand-800 hover:bg-brand-700 text-white text-sm font-bold py-2 px-6 rounded-lg border border-brand-700 transition-all">
-              Login
-            </button>
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="text-sm font-bold text-white hover:text-action transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="bg-brand-800 hover:bg-brand-700 text-white text-sm font-bold py-2 px-6 rounded-lg border border-brand-700 transition-all"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm font-bold text-white hover:text-action transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-brand-800 hover:bg-brand-700 text-white text-sm font-bold py-2 px-6 rounded-lg border border-brand-700 transition-all"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -89,9 +125,43 @@ export function Navbar() {
                 {link.name}
               </a>
             ))}
-            <button className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full">
-              Client Login
-            </button>
+            {user ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="text-slate-300 hover:text-action font-medium py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-center text-slate-300 hover:text-action font-medium py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full text-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>
