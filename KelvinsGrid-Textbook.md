@@ -127,3 +127,27 @@ We have the **Parts** (Components), the **Data** (Store), and the **Look** (Desi
 Now, we must assemble them into a **Page**.
 
 **Class Dismissed.**
+
+### Lesson 2.5: The "Expanded Banner" Hero
+We engaged in an iterative refactor to perfect the Hero section. We moved from a "Split Screen" to a "Full Width Banner."
+
+**The Architecture:**
+1.  **The Container:** `relative w-full max-w-screen-2xl h-[750px]`
+    -   *Why?* We wanted it WIDE (Screen 2XL = 1536px) and TALL (750px).
+    -   *Why Relative?* Because the images inside are `absolute`. The container acts as the "fence" that keeps them inside.
+
+2.  **The Background Layer (Images):**
+    -   `absolute inset-0`: This Pins the image to all four corners of the container.
+    -   `z-0`: Sits at the bottom of the stack.
+    -   `object-cover`: Ensures the image stretches to fill the box without distorting.
+
+3.  **The Foreground Layer (Text):**
+    -   `relative z-20`: Sits ON TOP of the images.
+    -   `pointer-events-none` (Optional generally, but here allows clicks): We allow clicks on buttons.
+    -   `h-full flex items-center`: Centers the text vertically within the massive 750px box.
+
+**Key CSS Lesson:**
+To resize this component, you **NEVER** touch the image. You only touch the **Container**.
+-   Bigger? Change `h-[750px]` to `h-[900px]`.
+-   Wider? Change `max-w-screen-2xl` to `max-w-full`.
+The images inside will automatically obey (thanks to `absolute inset-0`).

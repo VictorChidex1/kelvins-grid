@@ -18,7 +18,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full max-w-7xl mx-auto px-6 mt-32 mb-20 h-[800px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+    <section className="relative w-full max-w-screen-2xl mx-auto px-6 mt-32 mb-20 h-[800px] md:h-[750px] rounded-2xl overflow-hidden shadow-2xl">
       {/* Background Image Slider - Now spans the full container */}
       {images.map((img, index) => (
         <div
