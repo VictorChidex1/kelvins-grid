@@ -67,6 +67,21 @@ We created `src/components/Navbar.tsx` as a standalone UI component.
     - `md:flex`: On **medium** screens (desktop), switch to Flexbox layout (horizontal).
     - `md:hidden`: On **medium** screens, **hide** the mobile menu button.
 
+### Lesson 2.4: The Hero Carousel (`Hero.tsx`)
+We built a visually stunning hero section with a fading background slideshow.
+
+**The "Stacking" Logic:**
+Instead of moving images left/right, we stacked them all on top of each other using `absolute inset-0`.
+
+**The Cross-Fade Animation:**
+```javascript
+// We toggle opacity based on the current index
+className={`absolute inset-0 transition-opacity duration-[2000ms]
+  ${index === currentIndex ? "opacity-100" : "opacity-0"}
+`}
+```
+**Why?** This is smoother than a sliding carousel and feels more premium/cinematic. We used `setInterval` inside a `useEffect` to change the `currentIndex` every 6 seconds.
+
 ---
 
 ## 🔥 Module 3: The Backend (Firebase)
