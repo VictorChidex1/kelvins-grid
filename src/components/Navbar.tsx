@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "Services", href: "#services" },
+    { name: "Services", href: "/services" },
     { name: "Portfolio", href: "#portfolio" },
     { name: "About", href: "#about" },
     { name: "Contact", href: "#contact" },
@@ -15,27 +16,26 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto">
         <div className="glass-panel rounded-2xl px-6 py-3 flex items-center justify-between shadow-xl">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 group cursor-pointer">
             <img
               src="/kelvins-grid-logo.png"
               alt="Kelvin's Grid Logo"
               className="w-10 h-10 object-contain"
             />
-            <span className="font-heading font-bold text-xl tracking-tight text-white">
+            <span className="font-heading font-bold text-xl tracking-tight text-white group-hover:text-action transition-colors">
               KELVIN'S GRID
             </span>
-          </div>
-
+          </Link>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className="text-sm font-medium text-slate-400 hover:text-action transition-colors"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 

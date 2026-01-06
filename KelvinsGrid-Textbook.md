@@ -173,3 +173,67 @@ We have the **Parts** (Components), the **Data** (Store), and the **Look** (Desi
 Now, we must assemble them into a **Page**.
 
 **Class Dismissed.**
+
+### Lesson 2.7: Motion Engineering (Framer Motion)
+
+Static interfaces feel cheap. Premium interfaces usually have "weight" and "physics."
+To achieve this, we installed **Framer Motion** (`npm install framer-motion`).
+
+#### 1. The "System Boot" (Staggered Entrance)
+**The Concept:**
+Instead of the page just appearing, elements initialize sequentially, like a spaceship powering up.
+1.  Crosshairs draw themselves.
+2.  Data streams appear.
+3.  The images fade in.
+4.  The title slides up.
+
+**The Code (Drawing the Lines):**
+```javascript
+<motion.div 
+  initial={{ scaleX: 0 }} 
+  animate={{ scaleX: 1 }} 
+  transition={{ duration: 0.8, ease: "circOut" }}
+  className="origin-left" 
+/>
+```
+*   **`scaleX: 0 -> 1`**: The line starts with 0 width and stretches to full width.
+*   **`origin-left`**: Crucial. Without this, the line would grow from the center out. We want it to "draw" from left to right.
+
+#### 2. The 3D Glass Physics (Tilt Effect)
+**The Concept:**
+To sell the illusion that the pricing card is a physical piece of glass, it should rotate slightly when you touch it.
+
+**The Logic (Vector Math):**
+We track the mouse position relative to the center of the card.
+*   Mouse Top-Left -> Card tilts Up-Left.
+*   Mouse Bottom-Right -> Card tilts Down-Right.
+
+**The Code (Hooks):**
+```javascript
+const x = useMotionValue(0); 
+const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
+const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-17.5deg", "17.5deg"]);
+```
+*   **`useMotionValue(0)`**: A variable that updates instantly (60fps) without re-rendering the whole React component.
+*   **`useSpring`**: Adds "weight". When the mouse stops, the card doesn't stop instantly; it settles gently.
+*   **`useTransform`**: Maps the Math (Mouse is at -0.5) to the Visual (Rotate card -17.5 degrees).
+
+#### 3. The Smooth Carousel (`AnimatePresence`)
+**The Problem:**
+In standard React, when you switch images, the old one vanishes *instantly*, and the new one appears. It looks jerky.
+
+**The Solution:**
+```javascript
+<AnimatePresence mode="popLayout">
+  <motion.div
+    key={currentIndex}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }} // This runs BEFORE the element is removed!
+  />
+</AnimatePresence>
+```
+*   **`AnimatePresence`**: This magical wrapper detects when a child is deleted from the DOM. Instead of deleting it immediately, it freezes it, runs the `exit` animation, and *then* deletes it.
+*   This allows the Old Image to fade out *while* the New Image fades in.
+
+**Result:** A professional, "broadcast-quality" transition.
