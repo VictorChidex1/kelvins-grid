@@ -1,10 +1,18 @@
 import "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Services } from "./pages/Services";
 import { ServicesSection } from "./components/ServicesSection";
 import { Seed } from "./pages/Seed";
+import { Login } from "./pages/Login";
+import { AdminLayout } from "./components/admin/AdminLayout";
+import { Dashboard } from "./pages/admin/Dashboard";
 
 function App() {
   return (
@@ -15,10 +23,26 @@ function App() {
           <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
         </div>
 
-        <Navbar />
+        {/* Global Navbar is conditionally rendered or we accept it shows on login page too? 
+            Usually Admin has its own layout. If we put Navbar outside Routes it shows everywhere.
+            Let's keep Navbar for public pages. AdminLayout has its own sidebar.
+            We can make a wrapper for public routes or just accept Navbar everywhere.
+            Actually, for Admin, we likely DON'T want the public Navbar.
+            I will structure it so Navbar is only on public routes.
+        */}
 
-        <main className="relative z-10 w-full">
-          <Routes>
+        <Routes>
+          {/* Public Routes with Navbar */}
+          <Route
+            element={
+              <>
+                <Navbar />
+                <main className="relative z-10 w-full">
+                  <Outlet />
+                </main>
+              </>
+            }
+          >
             <Route
               path="/"
               element={
@@ -30,8 +54,14 @@ function App() {
             />
             <Route path="/services" element={<Services />} />
             <Route path="/seed" element={<Seed />} />
-          </Routes>
-        </main>
+            <Route path="/login" element={<Login />} />
+          </Route>
+
+          {/* Admin Routes (Protected, No Public Navbar) */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+          </Route>
+        </Routes>
       </div>
     </Router>
   );

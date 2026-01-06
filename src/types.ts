@@ -12,6 +12,8 @@ export interface Product {
     | "starlink"
     | "cctv"; // Expanded categories
   components: string[]; // Was features in seed
+  usage?: string;
+  priceWithoutPanels?: number;
   isFeatured?: boolean;
   loadCapacity?: string;
   badge?: string;

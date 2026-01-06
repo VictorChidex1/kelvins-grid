@@ -1,118 +1,166 @@
-import { collection, getDocs, doc, writeBatch } from "firebase/firestore";
+import { collection, doc, writeBatch } from "firebase/firestore";
 import { db } from "./firebase";
 import { type Product } from "../types";
 
+import img1kva from "../assets/images/1kva-inverter.png";
+import img2_5kva from "../assets/images/2.5kva inverter.png";
+import img3_5kva from "../assets/images/3.5kva-inverter.png";
+import img5kva from "../assets/images/5kva-inverter.png";
+import img7_5kva from "../assets/images/7.5kva-inverter.png";
+import img10kva from "../assets/images/10kva-inverter.png";
+import imgStarlink from "../assets/images/starlink-installation.png";
+import imgCCTV from "../assets/images/cctv-installation.png";
+
 export const initialProducts: Product[] = [
   {
-    id: "5kva-silence-bundle",
-    title: "5KVA Silence Bundle",
-    price: 5800000,
-    category: "Bundles",
-    description:
-      "Complete autonomy for 3-bedroom apartments. Powers Inverter ACs, Freezers, and Pumping Machines silently.",
+    id: "1kva-inverter-bundle",
+    title: "1kVA Inverter",
+    price: 980000,
+    priceWithoutPanels: 710000,
+    category: "solar",
+    description: "Compact power solution for basics.",
+    usage: "Fan, light, Tv, socket for charging phones and laptops",
     components: [
-      "5KVA Hybrid Inverter (Pure Sine Wave)",
-      "10kWh Lithium Battery Bank",
-      "8x 450W Monocrystalline Panels",
-      "Smart Monitoring App",
+      "220ah battery",
+      "PWM charge controller",
+      "(2) 320W Solar panels",
+    ],
+    stock: 10,
+    imageUrl: img1kva,
+    loadCapacity: "1KVA",
+  },
+  {
+    id: "2.5kva-inverter-bundle",
+    title: "2.5kVA Inverter",
+    price: 1950000,
+    priceWithoutPanels: 1300000,
+    category: "solar",
+    description: "Standard home power solution.",
+    usage:
+      "Fan, light, Tv, blender, freezer, soundbar, washing machine, socket for charging laptop/phones",
+    components: [
+      "(2) 220ah batteries",
+      "60amps MPPT charge controller",
+      "(4) 320W solar panels",
     ],
     stock: 5,
-    imageUrl:
-      "https://images.unsplash.com/photo-1592833159057-65a2845730ee?auto=format&fit=crop&q=80&w=1000",
-    badge: "Best Seller",
-    loadCapacity: "5KVA",
+    imageUrl: img2_5kva,
+    loadCapacity: "2.5KVA",
     isFeatured: true,
   },
   {
-    id: "10kva-estate-bundle",
-    title: "10KVA Estate Pro",
-    price: 12500000,
-    category: "Bundles",
-    description:
-      "Designed for duplexes and large estates. Handles heavy inductive loads including multiple ACs and pumps.",
+    id: "3.5kva-inverter-bundle",
+    title: "3.5kVA Inverter",
+    price: 3600000,
+    priceWithoutPanels: 2200000,
+    category: "solar",
+    description: "Heavy duty power solution.",
+    usage:
+      "TV, Standing fan, 1hp AC, Blender, Soundbar, Freezer, Washing Machine, Lights, Sockets for charging phones",
     components: [
-      "10KVA Industrial Inverter",
-      "20kWh LiFePO4 Battery Storage",
-      "16x 550W Half-Cut Panels",
-      "Precision ATS Integration",
+      "(4) 220AH tubular batteries",
+      "(12) 320W solar panels",
+      "MPPT charge controller",
     ],
-    stock: 2,
-    imageUrl:
-      "https://images.unsplash.com/photo-1545259741-2ea3ebf61fa3?auto=format&fit=crop&q=80&w=1000",
-    badge: "Premium",
-    loadCapacity: "10KVA",
+    stock: 3,
+    imageUrl: img3_5kva,
+    loadCapacity: "3.5KVA",
   },
   {
-    id: "lithium-pack-5kwh",
-    title: "5kWh Lithium Module",
-    price: 2100000,
-    category: "Batteries",
+    id: "5kva-inverter-system",
+    title: "5kVA Inverter System",
+    price: 5800000,
+    priceWithoutPanels: 3600000,
+    category: "solar",
     description:
-      "Expandable energy storage with 6000+ cycle life. Rack-mountable and maintenance-free.",
+      "Advanced capacity for larger homes. Powers multiple ACs, Freezers, and heavy appliances.",
+    usage: "Multiple ACs, Freezers, Pumping Machines, Heavy Appliances",
     components: [
-      "48V System",
-      "Built-in BMS",
-      "10-Year Warranty",
-      "Stackable Design",
-    ],
-    stock: 15,
-    imageUrl:
-      "https://images.unsplash.com/photo-1592833159155-c62df1b65634?auto=format&fit=crop&q=80&w=1000",
-    loadCapacity: "5kWh",
-  },
-  {
-    id: "canadian-solar-550w",
-    title: "Canadian Solar 550W",
-    price: 185000,
-    category: "Panels",
-    description:
-      "High-efficiency monocrystalline solar panel with half-cut cell technology for better shade tolerance.",
-    components: [
-      "21.5% Efficiency",
-      "Half-Cut Cell",
-      "Heavy Snow/Wind Load",
-      "25-Year Output Warranty",
-    ],
-    stock: 50,
-    imageUrl:
-      "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&q=80&w=1000",
-    loadCapacity: "550W",
-  },
-  {
-    id: "inverter-5kva-hybrid",
-    title: "Kelvin's 5KVA Hybrid",
-    price: 850000,
-    category: "Inverters",
-    description:
-      "Next-gen hybrid inverter with built-in MPPT charge controller and Wi-Fi monitoring.",
-    components: [
-      "Parallel Capability",
-      "Zero Transfer Time",
-      "Touchscreen Interface",
-      "Generator Support",
-    ],
-    stock: 8,
-    imageUrl:
-      "https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&q=80&w=1000",
-    loadCapacity: "5KVA",
-  },
-  {
-    id: "sme-starter-kit",
-    title: "SME Starter Kit",
-    price: 2800000,
-    category: "Bundles",
-    description:
-      "Perfect for small offices and shops. Keeps laptops, printers, and lights running 24/7.",
-    components: [
-      "3.5KVA Inverter",
-      "5kWh Lithium Battery",
-      "4x Panels",
+      "10kWh Lithium Battery",
+      "12x 400W Solar Panels",
+      "MPPT Charge Controller",
       "Installation Included",
     ],
-    stock: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=1000",
-    loadCapacity: "3.5KVA",
+    stock: 6,
+    imageUrl: img5kva,
+    badge: "Premium",
+    loadCapacity: "5kVA",
+    isFeatured: true,
+  },
+  {
+    id: "7.5kva-inverter-system",
+    title: "7.5kVA Inverter System",
+    price: 6400000,
+    priceWithoutPanels: 3900000,
+    category: "solar",
+    description: "High capacity system for luxury homes and large offices.",
+    usage: "Central ACs, Industrial Pumps, Office Buildings, Large Homes",
+    components: [
+      "10kWh Lithium Battery",
+      "16x 400W Solar Panels",
+      "MPPT Charge Controller",
+      "Installation Included",
+    ],
+    stock: 5,
+    imageUrl: img7_5kva,
+    badge: "Premium",
+    loadCapacity: "7.5kVA",
+    isFeatured: true,
+  },
+  {
+    id: "10kva-inverter-system",
+    title: "10kVA Inverter System",
+    price: 11000000,
+    priceWithoutPanels: 7500000,
+    category: "solar",
+    description:
+      "Industrial grade power solution for estates and commercial use.",
+    usage: "Estate Infrastructure, Commercial Plazas, Factory Equipment",
+    components: [
+      "2 x 10kWh Lithium Battery",
+      "16x 400W Solar Panels",
+      "MPPT Charge Controller",
+      "Installation Included",
+    ],
+    stock: 5,
+    imageUrl: img10kva,
+    badge: "Premium",
+    loadCapacity: "10kVA",
+    isFeatured: true,
+  },
+  {
+    id: "starlink-installation",
+    title: "Starlink Installation",
+    price: 650000,
+    category: "starlink",
+    description: "Bringing You Reliable High-Speed Internet, Anywhere.",
+    usage: "High-speed internet for rural and urban areas",
+    components: [
+      "Starlink Satellite Kit",
+      "Professional Mounting",
+      "Router Setup",
+      "App Configuration",
+    ],
+    stock: 20,
+    imageUrl: imgStarlink,
+    badge: "Hot",
+  },
+  {
+    id: "cctv-installation",
+    title: "CCTV Installation",
+    price: 450000,
+    category: "cctv",
+    description:
+      "Protect What Matters Most with Advanced Surveillance Solutions.",
+    usage: "24/7 Surveillance for home or business",
+    components: [
+      "HD Cameras",
+      "DVR/NVR System",
+      "Remote Viewing App",
+      "Installation & Cabling",
+    ],
+    stock: 15,
+    imageUrl: imgCCTV,
   },
 ];
 
@@ -120,18 +168,14 @@ export const seedDatabase = async () => {
   try {
     const productsCollection = collection(db, "products");
 
-    // Check if empty to avoid duplicates
-    const snapshot = await getDocs(productsCollection);
-    if (!snapshot.empty) {
-      console.log("Database already has data. Skipping seed.");
-      return { success: false, message: "Database not empty" };
-    }
+    // We removed the check for existing data to FORCE overwrite
+    console.log("Starting seed process (Overwriting existing data)...");
 
     const batch = writeBatch(db);
 
     initialProducts.forEach((product) => {
       const docRef = doc(productsCollection, product.id);
-      batch.set(docRef, product);
+      batch.set(docRef, product); // set() overwrites by default
     });
 
     await batch.commit();

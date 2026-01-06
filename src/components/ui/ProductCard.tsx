@@ -37,6 +37,17 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       )}
 
+      {/* Product Image */}
+      {product.imageUrl && (
+        <div className="w-full h-48 mb-6 overflow-hidden rounded-lg bg-white p-4 flex items-center justify-center">
+          <img
+            src={product.imageUrl}
+            alt={product.title}
+            className="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+          />
+        </div>
+      )}
+
       <h3 className="text-2xl text-white mb-2 font-heading">{product.title}</h3>
       <div className="text-3xl font-heading text-action mb-6">
         {formatPrice(product.price)}

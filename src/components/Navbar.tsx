@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export function Navbar() {
@@ -42,7 +42,7 @@ export function Navbar() {
           {/* CTA Button */}
           <div className="hidden md:block">
             <button className="bg-brand-800 hover:bg-brand-700 text-white text-sm font-bold py-2 px-6 rounded-lg border border-brand-700 transition-all">
-              Client Login
+              Login
             </button>
           </div>
 
