@@ -72,7 +72,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
               src={product.imageUrl}
               alt={product.title}
               loading={priority ? "eager" : "lazy"}
-              decoding={priority ? "sync" : "async"}
+              decoding="async"
               // @ts-expect-error - fetchpriority is a valid attribute but not yet in React types
               fetchpriority={priority ? "high" : "low"}
               className="w-full h-full object-contain relative z-10"

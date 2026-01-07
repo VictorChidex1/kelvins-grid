@@ -68,14 +68,18 @@ export function ServicesSection() {
       {/* Background Grid & Spotlights */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
 
-      <motion.div
-        style={{ y: blob1Y }}
-        className="absolute top-0 right-0 w-[500px] h-[500px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
-      />
-      <motion.div
-        style={{ y: blob2Y }}
-        className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"
-      />
+      {!isMobile && (
+        <>
+          <motion.div
+            style={{ y: blob1Y }}
+            className="absolute top-0 right-0 w-[500px] h-[500px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
+          />
+          <motion.div
+            style={{ y: blob2Y }}
+            className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"
+          />
+        </>
+      )}
 
       <div className="max-w-screen-2xl mx-auto relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
@@ -144,7 +148,6 @@ export function ServicesSection() {
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
-            style={{ WebkitTransform: "translateZ(0)" }}
           >
             {featuredProducts.map((product) => (
               <motion.div

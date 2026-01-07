@@ -34,7 +34,7 @@ export function Services() {
     if (!isLoading && products.length > 0) {
       const timer = setTimeout(() => {
         setVisibleCount(products.length); // Load the rest after initial paint
-      }, 100);
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [isLoading, products.length]);
@@ -65,14 +65,18 @@ export function Services() {
     >
       {/* Background Decor */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-      <motion.div
-        style={{ y: blob1Y }}
-        className="absolute top-20 left-10 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
-      />
-      <motion.div
-        style={{ y: blob2Y }}
-        className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"
-      />
+      {!isMobile && (
+        <>
+          <motion.div
+            style={{ y: blob1Y }}
+            className="absolute top-20 left-10 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
+          />
+          <motion.div
+            style={{ y: blob2Y }}
+            className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"
+          />
+        </>
+      )}
 
       <div className="max-w-screen-2xl mx-auto relative z-10">
         {/* Page Header */}
@@ -125,7 +129,6 @@ export function Services() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
-            style={{ WebkitTransform: "translateZ(0)" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             {products.length === 0 ? (
@@ -138,7 +141,6 @@ export function Services() {
                   key={product.id}
                   variants={itemVariants}
                   className="h-full"
-                  layout // Smooth layout processing when list grows
                 >
                   <ProductCard
                     product={product}
