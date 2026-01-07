@@ -6,12 +6,13 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import hero1 from "../assets/images/hero-image.jpg";
-import hero2 from "../assets/images/hero-image-2.jpg";
-import hero3 from "../assets/images/hero-image-3.jpg";
-import hero4 from "../assets/images/hero-image-4.jpg";
 
-const images = [hero1, hero2, hero3, hero4];
+const images = [
+  "/images/hero/hero-image.jpg",
+  "/images/hero/hero-image-2.jpg",
+  "/images/hero/hero-image-3.jpg",
+  "/images/hero/hero-image-4.jpg",
+];
 
 export function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);

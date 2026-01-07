@@ -9,6 +9,20 @@
       content="Kelvin's Grid: Premium solar inverter systems and renewable energy solutions in Nigeria. Engineered for reliability."
     />
     <title>Kelvin's Grid | Serverless Solar Utility</title>
+    <!-- CRITICAL PERFORMANCE: Preload LCP Image -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/hero/hero-image.jpg"
+      fetchpriority="high"
+    />
+    <!-- Prevent White Flash on Safari -->
+    <style>
+      body {
+        background-color: #020617;
+        margin: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
