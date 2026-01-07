@@ -11,6 +11,8 @@ import {
   updateProfile,
   updatePassword,
   deleteUser,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
@@ -42,6 +44,7 @@ interface AuthContextType {
   updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
   updateUserPassword: (password: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
+  reauthenticate: (password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -140,6 +143,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const reauthenticate = async (password: string) => {
+    if (!auth.currentUser || !auth.currentUser.email) return;
+    const credential = EmailAuthProvider.credential(
+      auth.currentUser.email,
+      password
+    );
+    await reauthenticateWithCredential(auth.currentUser, credential);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -154,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateUserProfile,
         updateUserPassword,
         deleteAccount,
+        reauthenticate,
       }}
     >
       {!loading && children}

@@ -11,6 +11,7 @@ export function Settings() {
     updateUserProfile,
     updateUserPassword,
     deleteAccount,
+    reauthenticate,
   } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,6 +25,7 @@ export function Settings() {
   // Form States
   const [fullName, setFullName] = useState(userProfile?.fullName || "");
   const [phone, setPhone] = useState(userProfile?.phone || "");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -47,7 +49,7 @@ export function Settings() {
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setMessage({ type: "error", text: "Passwords do not match." });
+      setMessage({ type: "error", text: "New passwords do not match." });
       return;
     }
     if (newPassword.length < 6) {
@@ -61,15 +63,28 @@ export function Settings() {
     setIsLoading(true);
     setMessage(null);
     try {
+      // Re-authenticate first
+      await reauthenticate(currentPassword);
+
+      // Then update password
       await updateUserPassword(newPassword);
       setMessage({ type: "success", text: "Password updated successfully!" });
       setNewPassword("");
       setConfirmPassword("");
+      setCurrentPassword("");
     } catch (error: any) {
-      setMessage({
-        type: "error",
-        text: "Failed to update password. You may need to re-login.",
-      });
+      console.error(error);
+      if (
+        error.code === "auth/invalid-credential" ||
+        error.code === "auth/wrong-password"
+      ) {
+        setMessage({ type: "error", text: "Incorrect current password." });
+      } else {
+        setMessage({
+          type: "error",
+          text: "Failed to update password: " + error.message,
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -228,6 +243,18 @@ export function Settings() {
         <div className="bg-brand-900 border border-brand-800 rounded-xl p-6 mb-6">
           <h2 className="text-xl font-bold mb-6">Security</h2>
           <form onSubmit={handlePasswordChange} className="space-y-4">
+            <div>
+              <label className="block text-sm text-slate-400 mb-2">
+                Current Password
+              </label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full bg-brand-950 border border-brand-800 rounded-lg px-4 py-2 text-white focus:border-action focus:outline-none"
+                placeholder="Required to set new password"
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm text-slate-400 mb-2">
@@ -257,7 +284,7 @@ export function Settings() {
             <div className="flex justify-end mt-4">
               <button
                 type="submit"
-                disabled={isLoading || !newPassword}
+                disabled={isLoading || !newPassword || !currentPassword}
                 className="bg-brand-800 text-white font-bold px-6 py-2 rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50 border border-brand-700"
               >
                 Update Password
