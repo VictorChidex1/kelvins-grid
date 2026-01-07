@@ -2,14 +2,7 @@ import { collection, doc, writeBatch } from "firebase/firestore";
 import { db } from "./firebase";
 import { type Product } from "../types";
 
-import img1kva from "../assets/images/1kva-inverter.png";
-import img2_5kva from "../assets/images/2.5kva inverter.png";
-import img3_5kva from "../assets/images/3.5kva-inverter.png";
-import img5kva from "../assets/images/5kva-inverter.png";
-import img7_5kva from "../assets/images/7.5kva-inverter.png";
-import img10kva from "../assets/images/10kva-inverter.png";
-import imgStarlink from "../assets/images/starlink-installation.png";
-import imgCCTV from "../assets/images/cctv-installation.png";
+// Image imports removed - using static public paths
 
 export const initialProducts: Product[] = [
   {
@@ -26,7 +19,7 @@ export const initialProducts: Product[] = [
       "(2) 320W Solar panels",
     ],
     stock: 10,
-    imageUrl: img1kva,
+    imageUrl: "/images/1kva-inverter.png",
     loadCapacity: "1KVA",
   },
   {
@@ -44,7 +37,7 @@ export const initialProducts: Product[] = [
       "(4) 320W solar panels",
     ],
     stock: 5,
-    imageUrl: img2_5kva,
+    imageUrl: "/images/2.5kva-inverter.png", // Renamed to remove space
     loadCapacity: "2.5KVA",
     isFeatured: true,
   },
@@ -63,7 +56,7 @@ export const initialProducts: Product[] = [
       "MPPT charge controller",
     ],
     stock: 3,
-    imageUrl: img3_5kva,
+    imageUrl: "/images/3.5kva-inverter.png",
     loadCapacity: "3.5KVA",
   },
   {
@@ -82,7 +75,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 6,
-    imageUrl: img5kva,
+    imageUrl: "/images/5kva-inverter.png",
     badge: "Premium",
     loadCapacity: "5kVA",
     isFeatured: true,
@@ -102,7 +95,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 5,
-    imageUrl: img7_5kva,
+    imageUrl: "/images/7.5kva-inverter.png",
     badge: "Premium",
     loadCapacity: "7.5kVA",
     isFeatured: true,
@@ -123,7 +116,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 5,
-    imageUrl: img10kva,
+    imageUrl: "/images/10kva-inverter.png",
     badge: "Premium",
     loadCapacity: "10kVA",
     isFeatured: true,
@@ -142,7 +135,7 @@ export const initialProducts: Product[] = [
       "App Configuration",
     ],
     stock: 20,
-    imageUrl: imgStarlink,
+    imageUrl: "/images/starlink-installation.png",
     badge: "Hot",
   },
   {
@@ -160,7 +153,7 @@ export const initialProducts: Product[] = [
       "Installation & Cabling",
     ],
     stock: 15,
-    imageUrl: imgCCTV,
+    imageUrl: "/images/cctv-installation.png",
   },
 ];
 
