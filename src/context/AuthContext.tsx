@@ -10,11 +10,19 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase";
+
+export interface UserProfile {
+  email: string;
+  role: "admin" | "customer";
+  fullName?: string;
+  phone?: string;
+}
 
 interface AuthContextType {
   user: User | null;
+  userProfile: UserProfile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (
@@ -32,11 +40,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserProfile(docSnap.data() as UserProfile);
+        }
+      } else {
+        setUserProfile(null);
+      }
       setLoading(false);
     });
     return () => unsubscribe();
@@ -84,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        userProfile,
         loading,
         login,
         signup,

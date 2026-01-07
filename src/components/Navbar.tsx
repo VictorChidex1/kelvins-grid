@@ -4,7 +4,8 @@ import { useAuth } from "../context/AuthContext";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { user, userProfile, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -48,22 +49,63 @@ export function Navbar() {
           </div>
 
           {/* CTA Button */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* CTA Button / Profile Dropdown */}
+          <div className="hidden md:flex items-center gap-4 relative">
             {user ? (
-              <>
-                <Link
-                  to="/admin"
-                  className="text-sm font-bold text-white hover:text-action transition-colors"
-                >
-                  Dashboard
-                </Link>
+              <div className="relative">
                 <button
-                  onClick={handleLogout}
-                  className="bg-brand-800 hover:bg-brand-700 text-white text-sm font-bold py-2 px-6 rounded-lg border border-brand-700 transition-all"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-white font-bold hover:bg-brand-700 transition-colors focus:ring-2 focus:ring-action"
                 >
-                  Logout
+                  {userProfile?.fullName?.[0] ||
+                    user.email?.[0]?.toUpperCase() ||
+                    "U"}
                 </button>
-              </>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-brand-900 border border-brand-800 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    <div className="px-4 py-3 border-b border-brand-800 bg-brand-950/50">
+                      <p className="text-sm text-white font-medium truncate">
+                        {userProfile?.fullName || "User"}
+                      </p>
+                      <p className="text-xs text-slate-400 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    <div className="py-1">
+                      <button className="w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-brand-800 transition-colors cursor-not-allowed">
+                        Settings
+                      </button>
+
+                      <Link
+                        to="/dashboard"
+                        className="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-brand-800 transition-colors"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        Dashboard
+                      </Link>
+
+                      {userProfile?.role === "admin" && (
+                        <Link
+                          to="/admin"
+                          className="block px-4 py-2 text-sm text-action hover:bg-brand-800 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          Admin Panel
+                        </Link>
+                      )}
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-brand-800 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <Link
@@ -128,12 +170,21 @@ export function Navbar() {
             {user ? (
               <>
                 <Link
-                  to="/admin"
+                  to="/dashboard"
                   className="text-slate-300 hover:text-action font-medium py-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
                 </Link>
+                {userProfile?.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="text-action font-medium py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
+                )}
                 <button
                   onClick={() => {
                     handleLogout();

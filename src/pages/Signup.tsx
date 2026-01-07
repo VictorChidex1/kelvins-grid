@@ -39,17 +39,21 @@ export function Signup() {
       setError("");
       setLoading(true);
       await signup(email, password, fullName, phone);
-      navigate("/admin");
+      navigate("/");
     } catch (err: any) {
       console.error(err);
-      setError("Failed to create an account. " + err.message);
+      if (err.code === "auth/email-already-in-use") {
+        setError("Account already exists. Please log in.");
+      } else {
+        setError("Failed to create an account. " + err.message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-950 text-white px-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-brand-950 text-white px-4 relative pt-28 pb-12">
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
 
       <div className="w-full max-w-md bg-brand-900 border border-brand-800 rounded-xl p-8 shadow-2xl z-10">

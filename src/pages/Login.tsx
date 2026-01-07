@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../lib/firebase";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -18,7 +20,12 @@ export function Login() {
 
     try {
       await login(email, password);
-      navigate("/admin");
+      const userDoc = await getDoc(doc(db, "users", auth.currentUser!.uid));
+      if (userDoc.exists() && userDoc.data().role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err: any) {
       console.error(err);
       setError("Failed to login. Please check your credentials.");
@@ -31,7 +38,12 @@ export function Login() {
     try {
       setError("");
       await googleLogin();
-      navigate("/admin");
+      const userDoc = await getDoc(doc(db, "users", auth.currentUser!.uid));
+      if (userDoc.exists() && userDoc.data().role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (err: any) {
       console.error(err);
       setError("Failed to sign in with Google.");
