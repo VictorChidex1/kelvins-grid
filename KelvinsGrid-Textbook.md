@@ -905,6 +905,79 @@ Invite the user to click without screaming "CLICK ME."
 - **`hover`**: When the _parent card_ is hovered, this specific child wakes up.
 - **Why use Variants?** Because the _hover trigger_ is on the parent Card, but the _animation_ is on the child Button. Variables allow the parent to control the child's state cleanly.
 
+---
+
+## 🛍️ Module 13: Content Strategy & Data Seeding
+
+We had a problem. We have 10 great products (Solar, Starlink, CCTV), but the landing page only showed the first 3. And the first 3 were ALL Inverters.
+We needed a curated "Mix Tape," not just a "Recent Files" list.
+
+### Lesson 13.1: The "Mix Tape" Logic (Array Manipulation)
+
+**The Goal:**
+Show 4 items:
+
+1.  Top 2 Solar Systems (The basics)
+2.  1 Starlink (The internet)
+3.  1 CCTV (The security)
+
+**The Code (`ServicesSection.tsx`):**
+
+```typescript
+// 1. Get the Solar stuff
+const solarProducts = products
+  .filter((p) => p.category === "solar")
+  .slice(0, 2);
+
+// 2. Get the Cool stuff
+const otherProducts = products.filter(
+  (p) => p.category === "starlink" || p.category === "cctv"
+);
+
+// 3. Mash them together
+const featuredProducts = [...solarProducts, ...otherProducts];
+```
+
+**Deep Dive:**
+
+- **`.filter()`**: Like a strainer. We pour all products in, and only the ones that match our condition stay.
+- **`.slice(0, 2)`**: Take the first 2 items. Ignore the rest.
+- **`...` (Spread Operator)**: This is "Unpacking".
+  - Imagine `solarProducts` is a box containing `[A, B]`.
+  - Imagine `otherProducts` is a box containing `[C, D]`.
+  - `[...solarProducts, ...otherProducts]` means: "Dump the contents of Box 1 and Box 2 into a New Box." -> `[A, B, C, D]`.
+
+### Lesson 13.2: The "Reset Data" Button (Admin Power Tools)
+
+**The Problem:**
+We added Starlink to the code (`seed.ts`), but the Cloud Database (Firestore) still had the old data.
+We needed a way to push the new code data to the cloud without using the command line.
+
+**The Solution:**
+A secret button in the Admin Dashboard.
+
+**The Code (`Dashboard.tsx`):**
+
+```tsx
+<button
+  onClick={async () => {
+    if (confirm("Overwrite data?")) {
+      const { seedDatabase } = await import("../../lib/seed"); // 👈 Dynamic Import
+      await seedDatabase();
+    }
+  }}
+>
+  Reset Data
+</button>
+```
+
+**Deep Dive (Dynamic Imports):**
+
+- **`import("../../lib/seed")`**: Normally, we put imports at the top of the file.
+- **The Issue:** `seed.ts` is heavy. It contains big arrays of dummy data. We don't want to force _every_ admin user to download that file just to view the dashboard.
+- **The Fix:** By using `await import()` _inside the click handler_, the browser **only downloads that file when you click the button**.
+- This is called **Code Splitting**, and it keeps our app fast.
+
 **The Data Structure:**
 
 ```typescript
