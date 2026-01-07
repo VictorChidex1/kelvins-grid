@@ -1,0 +1,21 @@
+{
+  "name": "Kelvin's Grid",
+  "short_name": "Kelvin's Grid",
+  "description": "Premium solar inverter systems and renewable energy solutions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/kelvins-grid-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/kelvins-grid-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
