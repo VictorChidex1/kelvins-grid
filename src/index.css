@@ -10,22 +10,9 @@
 @tailwind utilities;
 
 @layer base {
-  html {
-    overscroll-behavior-y: none;
-  }
-
   body {
     /* Global Reset: Midnight Navy BG, Signal White Text */
     @apply bg-brand-950 text-slate-50 font-sans antialiased selection:bg-action selection:text-brand-950;
-    overscroll-behavior-y: none;
-  }
-
-  /* Remove tap delay on clickable elements */
-  button,
-  a,
-  input,
-  textarea {
-    touch-action: manipulation;
   }
 
   /* All Headings use Space Grotesk */

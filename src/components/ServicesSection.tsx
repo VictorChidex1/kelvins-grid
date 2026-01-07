@@ -130,7 +130,7 @@ export function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "600px" }} // Pre-load content well before it appears
+            viewport={{ once: true, margin: "200px" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
             style={{ WebkitTransform: "translateZ(0)" }}
           >
@@ -139,7 +139,6 @@ export function ServicesSection() {
                 key={product.id}
                 variants={itemVariants}
                 className="h-full"
-                style={{ willChange: "transform, opacity" }} // Hint browser to optimize
               >
                 <ProductCard product={product} />
               </motion.div>
