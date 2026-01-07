@@ -1,5 +1,5 @@
 // PERFORMANCE: Heavy blurs and parallax are disabled on mobile (iOS) to prevent GPU memory crashes.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useProductStore } from "../store/useProductStore";
 import { ProductCard } from "../components/ui/ProductCard";
@@ -23,9 +23,21 @@ export function Services() {
     isMobile ? [0, 0] : [0, -200]
   );
 
+  const [visibleCount, setVisibleCount] = useState(4); // Render Slicing: Start with 4
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Progressive Hydration
+  useEffect(() => {
+    if (!isLoading && products.length > 0) {
+      const timer = setTimeout(() => {
+        setVisibleCount(products.length); // Load the rest after initial paint
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, products.length]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -121,13 +133,17 @@ export function Services() {
                 No systems currently available. check back later.
               </div>
             ) : (
-              products.map((product) => (
+              products.slice(0, visibleCount).map((product, index) => (
                 <motion.div
                   key={product.id}
                   variants={itemVariants}
                   className="h-full"
+                  layout // Smooth layout processing when list grows
                 >
-                  <ProductCard product={product} />
+                  <ProductCard
+                    product={product}
+                    priority={index < 2} // Prioritize first 2 images
+                  />
                 </motion.div>
               ))
             )}

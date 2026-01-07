@@ -5,6 +5,7 @@ import type { Product } from "../../types";
 
 interface ProductCardProps {
   product: Product;
+  priority?: boolean;
 }
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat("en-NG", {
@@ -13,7 +14,7 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat("en-NG", {
   minimumFractionDigits: 0,
 });
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, priority = false }: ProductCardProps) {
   // Determine Overlay Icon
   const getOverlayIcon = () => {
     switch (product.category) {
@@ -70,8 +71,10 @@ export function ProductCard({ product }: ProductCardProps) {
               }}
               src={product.imageUrl}
               alt={product.title}
-              loading="lazy"
-              decoding="async"
+              loading={priority ? "eager" : "lazy"}
+              decoding={priority ? "sync" : "async"}
+              // @ts-expect-error - fetchpriority is a valid attribute but not yet in React types
+              fetchpriority={priority ? "high" : "low"}
               className="w-full h-full object-contain relative z-10"
             />
           ) : (
