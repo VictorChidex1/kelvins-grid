@@ -130,14 +130,16 @@ export function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, amount: 0.1 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            style={{ WebkitTransform: "translateZ(0)" }} // Force hardware acceleration on Safari
           >
             {featuredProducts.map((product) => (
               <motion.div
                 key={product.id}
                 variants={itemVariants}
                 className="h-full"
+                style={{ willChange: "transform, opacity" }} // Hint browser to optimize
               >
                 <ProductCard product={product} />
               </motion.div>

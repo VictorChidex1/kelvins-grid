@@ -53,6 +53,7 @@ export function Hero() {
         animate={{ opacity: 0.2 }}
         transition={{ duration: 1.5, delay: 0.5 }}
         className="absolute inset-0 z-[5] pointer-events-none mix-blend-overlay"
+        style={{ WebkitTransform: "translateZ(0)" }}
       >
         <div className="absolute inset-0 bg-grid-subtle animate-grid-slow" />
       </motion.div>
