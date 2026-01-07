@@ -82,10 +82,6 @@ export function Navbar() {
                     </div>
 
                     <div className="py-1">
-                      <button className="w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-brand-800 transition-colors cursor-not-allowed">
-                        Settings
-                      </button>
-
                       <Link
                         to="/settings"
                         className="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-brand-800 transition-colors"

@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import { useAuth, type UserProfile } from "../../context/AuthContext";
-import { storage } from "../../lib/firebase"; // Ensure this is exported from lib/firebase
+import { useAuth, type UserProfile } from "../context/AuthContext";
+import { storage } from "../lib/firebase"; // Ensure this is exported from lib/firebase
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useNavigate } from "react-router-dom";
 

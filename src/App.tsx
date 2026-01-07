@@ -15,7 +15,7 @@ import { Signup } from "./pages/Signup";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
-import { Settings } from "./pages/dashboard/Settings";
+import { Settings } from "./pages/Settings";
 
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AuthProvider } from "./context/AuthContext";
