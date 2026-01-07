@@ -923,4 +923,31 @@ allow read: if isOwner(userId) || isAdmin();
 ```
 
 **Key Takeaway:**
-Frontend code (`ClientDetail.tsx`) can ask for data, but the Backend (`firestore.rules`) has the final say. Always align your permissions with your features.
+
+---
+
+## 🌱 Module 11: Seeding vs. Content Management (CMS)
+
+You asked: _"Why must we alwas seed? Is that the best way?"_
+
+**The Short Answer:** No. Seeding is for **Development**. A CMS is for **Production**.
+
+### Lesson 11.1: What is "Seeding"?
+
+Seeding is a **Developer Tool**. It's a script that wipes the slate clean and installs a "perfect" initial state.
+
+- **Pros:** Fast, consistent, great for resetting after testing bugs.
+- **Cons:** clear-all approach. If you change a price in the database manually, a seed script might overwrite it.
+
+### Lesson 11.2: The "Best Way" (Product Manager)
+
+In a real business, Kelvin shouldn't call a developer to add a new inverter. He should click **"Add Product"** on his dashboard.
+
+**The Evolution:**
+
+1.  **Phase 1 (Hardcoded):** Products are just HTML. (Fastest, but rigid).
+2.  **Phase 2 (Seeding):** Products are in DB, but managed by code scripts. (Good for initial setup).
+3.  **Phase 3 (Admin CMS):** Products are managed via a UI (`/admin/products`). **<-- WE ARE HERE.**
+
+**Moving Forward:**
+We are done with Seeding. The next step is to build the **Product Editor** in the Admin Dashboard so you can manage inventory without touching code.

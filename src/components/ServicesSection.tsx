@@ -77,7 +77,7 @@ export function ServicesSection() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {featuredProducts.map((product, index) => (
               <motion.div
                 key={product.id}
@@ -85,6 +85,7 @@ export function ServicesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="h-full"
               >
                 <ProductCard product={product} />
               </motion.div>
