@@ -1,11 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/useProductStore";
 import { ProductCard } from "./ui/ProductCard";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function ServicesSection() {
   const { products, fetchProducts, isLoading } = useProductStore();
+  const containerRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const blob1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const blob2Y = useTransform(scrollYProgress, [0, 1], [0, 100]);
 
   useEffect(() => {
     fetchProducts();
@@ -14,9 +23,43 @@ export function ServicesSection() {
   // Show only top 3 products for the landing page
   const featuredProducts = products.slice(0, 3);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { stiffness: 50, damping: 15 },
+    },
+  };
+
   return (
-    <section className="py-24 px-6 md:px-12 relative z-10 bg-brand-950">
-      <div className="max-w-screen-2xl mx-auto">
+    <section
+      ref={containerRef}
+      className="py-24 px-6 md:px-12 relative z-10 bg-brand-950 overflow-hidden"
+    >
+      {/* Background Grid & Spotlights */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+
+      <motion.div
+        style={{ y: blob1Y }}
+        className="absolute top-0 right-0 w-[500px] h-[500px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
+      />
+      <motion.div
+        style={{ y: blob2Y }}
+        className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none"
+      />
+
+      <div className="max-w-screen-2xl mx-auto relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-2xl">
             <motion.div
@@ -77,20 +120,23 @@ export function ServicesSection() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {featuredProducts.map((product, index) => (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            {featuredProducts.map((product) => (
               <motion.div
                 key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                variants={itemVariants}
                 className="h-full"
               >
                 <ProductCard product={product} />
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

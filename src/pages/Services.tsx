@@ -1,18 +1,57 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useProductStore } from "../store/useProductStore";
 import { ProductCard } from "../components/ui/ProductCard";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export function Services() {
   const { products, isLoading, error, fetchProducts } = useProductStore();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll(); // Global scroll
+
+  const blob1Y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const blob2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { stiffness: 50, damping: 15 },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-brand-950 pt-32 pb-20 px-6">
-      <div className="max-w-screen-2xl mx-auto">
+    <div
+      ref={containerRef}
+      className="min-h-screen bg-brand-950 pt-32 pb-20 px-6 relative overflow-hidden"
+    >
+      {/* Background Decor */}
+      <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+      <motion.div
+        style={{ y: blob1Y }}
+        className="absolute top-20 left-10 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
+      />
+      <motion.div
+        style={{ y: blob2Y }}
+        className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"
+      />
+
+      <div className="max-w-screen-2xl mx-auto relative z-10">
         {/* Page Header */}
         <div className="mb-16 max-w-2xl">
           <motion.h1
@@ -58,25 +97,28 @@ export function Services() {
 
         {/* Product Grid */}
         {!isLoading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
             {products.length === 0 ? (
               <div className="col-span-full text-center py-20 text-slate-500">
                 No systems currently available. check back later.
               </div>
             ) : (
-              products.map((product, index) => (
+              products.map((product) => (
                 <motion.div
                   key={product.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  variants={itemVariants}
                   className="h-full"
                 >
                   <ProductCard product={product} />
                 </motion.div>
               ))
             )}
-          </div>
+          </motion.div>
         )}
       </div>
     </div>

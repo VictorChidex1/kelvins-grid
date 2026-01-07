@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowRight, Box, Zap, Truck } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import type { Product } from "../../types";
 
 interface ProductCardProps {
@@ -7,8 +7,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false);
-
   // Format price to Naira currency
   const formatPrice = (amount: number) => {
     return new Intl.NumberFormat("en-NG", {
@@ -19,17 +17,19 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div
-      className={`
-        relative group bg-brand-900 border border-brand-800 rounded-xl overflow-hidden transition-all duration-500 flex flex-col md:flex-row h-full
-        ${
-          isHovered
-            ? "shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] border-brand-700 translate-y-[-4px]"
-            : ""
-        }
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <motion.div
+      whileHover="hover"
+      initial="rest"
+      animate="rest"
+      variants={{
+        rest: { scale: 1, y: 0 },
+        hover: {
+          scale: 1.02,
+          y: -8,
+          transition: { type: "spring", stiffness: 300, damping: 20 },
+        },
+      }}
+      className="relative group bg-brand-900 border border-brand-800 rounded-xl overflow-hidden shadow-2xl hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] hover:border-brand-700 transition-colors duration-300 flex flex-col md:flex-row h-full"
     >
       {/* Badge */}
       {product.badge && (
@@ -41,10 +41,14 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Image Section (Left/Top) */}
       <div className="w-full md:w-2/5 relative bg-white p-6 flex items-center justify-center overflow-hidden">
         {product.imageUrl ? (
-          <img
+          <motion.img
+            variants={{
+              rest: { scale: 1 },
+              hover: { scale: 1.05, transition: { duration: 0.4 } },
+            }}
             src={product.imageUrl}
             alt={product.title}
-            className="w-full h-full object-contain hover:scale-105 transition-transform duration-500 relative z-10"
+            className="w-full h-full object-contain relative z-10"
           />
         ) : (
           <div className="w-full h-48 flex items-center justify-center text-brand-900/20">
@@ -53,13 +57,19 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Floating Action Button */}
-        <div
-          className={`absolute bottom-4 right-4 w-10 h-10 bg-action rounded-full flex items-center justify-center text-brand-950 shadow-xl z-20 transition-transform duration-300 ${
-            isHovered ? "scale-100" : "scale-0"
-          }`}
+        <motion.div
+          variants={{
+            rest: { scale: 0, opacity: 0 },
+            hover: {
+              scale: 1,
+              opacity: 1,
+              transition: { type: "spring", stiffness: 400, damping: 10 },
+            },
+          }}
+          className="absolute bottom-4 right-4 w-10 h-10 bg-action rounded-full flex items-center justify-center text-brand-950 shadow-xl z-20"
         >
           <ArrowRight size={20} />
-        </div>
+        </motion.div>
       </div>
 
       {/* Content Section (Right/Bottom) */}
@@ -120,6 +130,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
