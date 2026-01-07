@@ -1186,47 +1186,88 @@ Why is mobile TALLER (800px) than Desktop (750px)?
 
 ---
 
-## 🏎️ Module 16: Mobile Performance (The Safari Fix)
+## 🏎️ Module 16: Mobile Performance (The Memory Trap)
 
-You noticed that Safari on iPhone was "Loading Slowly" while scrolling.
-This wasn't a network issue. It was a **Rendering Pipeline** issue.
+We initially tried to "Force" the browser to be fast using `will-change: transform`.
+**The Result:** It backfired on iPhone. The phone ran out of Video Memory and started "dumping" layers, causing white flashes and freezing.
 
-### The Problem: "Lazy" Scroll Events
+### Lesson 16.1: The "will-change" Trap
 
-iOS halts JavaScript execution while the finger is on the screen (during the scroll). It only fires events _after_ the momentum stops.
+Telling the browser `will-change` is like screaming "KEEP THIS IN MEMORY FOREVER!"
+On a Desktop with 16GB RAM? Fine.
+On an iPhone with shared GPU memory? Fatal. The browser panic-dumps the texture to save the phone from crashing.
 
-- **Result:** The user scrolls down. The element is _technically_ on screen. But the "Show Animation" code doesn't run until 200ms later when the scroll stops. This looks like lag.
+**The Correction:**
+We removed `will-change`. We switched to a lighter strategy: **Passive Layer Promotion** (See Module 17).
 
-### The Solution 1: Aggressive Pre-Loading (`viewport.margin`)
+---
 
-We changed the "Trigger Line."
+## 🌪️ Module 17: The Architecture of Smoothness (Services Page)
 
-**Old Code:**
+You asked for a "Deep Dive" into how we optimized the Services page. Here is the engineering breakdown of the **Three Pillars of Smoothness** we implemented.
 
-```tsx
-viewport={{ once: true, amount: 0.1 }}
-// "Start loading when 10% of the item is VISIBLE."
-```
+### Pillar 1: "Viewport Look-Ahead" (Pre-Loading)
 
-**New Code:**
+**The Problem:**
+By default, animations trigger when the element _enters_ the screen.
+On Safari (iOS), the "Scroll Event" halts while your finger is moving. By the time the event fires, the element is already 300px up the screen. The animation starts late, creating a "Pop-in" effect.
 
-```tsx
-viewport={{ once: true, margin: "600px" }}
-// "Start loading when the item is 600px BELOW the screen."
-```
-
-**Why this fixes it:**
-By the time your thumb actually scrolls to the product, the animation triggered 0.5 seconds ago. It's already waiting for you. **Zero perceived latency.**
-
-### The Solution 2: GPU Layering (`will-change`)
-
-You noticed the Hero section "re-loading" when scrolling up.
-This is because Safari tries to save memory by "throwing away" the pixels of large images when they go off-screen. When you scroll back, it has to "repaint" them.
-
-**The Fix:**
+**The Solution:**
+We utilized the `viewport` prop in Framer Motion with a **Margin**.
 
 ```tsx
-style={{ willChange: "transform" }}
+viewport={{ once: true, margin: "200px" }}
 ```
 
-This tells the browser: _"Do not delete this layer. Keep it in the Video Memory (GPU)."_ prevents the white flash or repaint lag when returning to the top.
+**The Logic:**
+Imagine a "Tripwire" 200 pixels _below_ the bottom of your phone screen.
+As you scroll down, the product hits this invisible tripwire _before_ it enters your screen.
+The animation starts. By the time the pixels actually hit your retina, the heavy lifting is done. The product is there. waiting.
+
+**Terminology:**
+
+- **Virtual Viewport:** The area the browser "thinks" is being viewed. We expanded this virtually.
+
+### Pillar 2: Passive Layer Promotion (`translateZ`)
+
+**The Problem:**
+Reflowing text and painting pixels is CPU work (Slow). Moving a picture is GPU work (Fast).
+Usually, browsers treat `<div>`s as flat paint. If you scroll, it repaints every frame (16ms).
+
+**The Solution:**
+We forced the browser to put the Grid and the Blobs onto their own "sheets of glass" (Composite Layers).
+
+```tsx
+style={{ WebkitTransform: "translateZ(0)" }}
+```
+
+**The Logic:**
+`translateZ(0)` is a 3D transform that moves the element... nowhere.
+BUT, to calculate 3D, the browser MUST hand the element over to the GPU.
+This accidentally-on-purpose promotes the layer to the graphics card.
+
+**Why this is better than `will-change`:**
+
+- `will-change` is a demand ("Reserve memory NOW").
+- `translateZ(0)` is a hint ("This is a 3D object, treat it accordingly").
+  It is safer and causes fewer memory crashes on iOS.
+
+### Pillar 3: "WhileInView" vs "Animate"
+
+**The Problem:**
+Previously, we used `animate="show"`. This meant: "As soon as the component mounts (even if it's 5000px down the page), START ANIMATING."
+Your phone was trying to animate 20 products it couldn't even see.
+
+**The Solution:**
+
+```tsx
+initial = "hidden";
+whileInView = "show";
+```
+
+**The Logic:**
+We put the animation on pause. It uses **Zero CPU** until the "Tripwire" (Pillar 1) is hit.
+This leaves 100% of the CPU available for the scrolling physics over the Hero section.
+
+**Summary:**
+We stopped trying to be faster than the phone. We started working _with_ the phone's cleanup logic.

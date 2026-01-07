@@ -1,4 +1,6 @@
+// PERFORMANCE: Heavy blurs and parallax are disabled on mobile (iOS) to prevent GPU memory crashes.
 import { useEffect, useRef } from "react";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useProductStore } from "../store/useProductStore";
 import { ProductCard } from "../components/ui/ProductCard";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -8,9 +10,18 @@ export function Services() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll(); // Global scroll
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const blob1Y = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const blob2Y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const blob1Y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isMobile ? [0, 0] : [0, 200]
+  );
+  const blob2Y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isMobile ? [0, 0] : [0, -200]
+  );
 
   useEffect(() => {
     fetchProducts();
@@ -43,11 +54,11 @@ export function Services() {
       {/* Background Decor */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
       <motion.div
-        style={{ y: blob1Y, WebkitTransform: "translateZ(0)" }}
+        style={{ y: blob1Y }}
         className="absolute top-20 left-10 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
       />
       <motion.div
-        style={{ y: blob2Y, WebkitTransform: "translateZ(0)" }}
+        style={{ y: blob2Y }}
         className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"
       />
 
@@ -101,7 +112,7 @@ export function Services() {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "200px" }}
+            viewport={{ once: true, amount: 0.2 }}
             style={{ WebkitTransform: "translateZ(0)" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >

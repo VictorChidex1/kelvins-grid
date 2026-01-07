@@ -22,11 +22,11 @@ export function ProductCard({ product }: ProductCardProps) {
     switch (product.category) {
       case "solar":
       case "Inverters":
-        return "/images/solar-installation-icon.png";
+        return "/images/solar-installation-icon.webp";
       case "starlink":
-        return "/images/wifi-icon.png";
+        return "/images/wifi-icon.webp";
       case "cctv":
-        return "/images/security-camera-icon.png";
+        return "/images/security-camera-icon.webp";
       default:
         return null;
     }

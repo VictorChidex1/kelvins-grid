@@ -1,8 +1,10 @@
+// PERFORMANCE: Heavy blurs and parallax are disabled on mobile (iOS) to prevent GPU memory crashes.
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useProductStore } from "../store/useProductStore";
 import { ProductCard } from "./ui/ProductCard";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 export function ServicesSection() {
   const { products, fetchProducts, isLoading } = useProductStore();
@@ -13,8 +15,18 @@ export function ServicesSection() {
     offset: ["start end", "end start"],
   });
 
-  const blob1Y = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const blob2Y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const blob1Y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isMobile ? [0, 0] : [0, -100]
+  );
+  const blob2Y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    isMobile ? [0, 0] : [0, 100]
+  );
 
   useEffect(() => {
     fetchProducts();
@@ -130,7 +142,7 @@ export function ServicesSection() {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "200px" }}
+            viewport={{ once: true, amount: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
             style={{ WebkitTransform: "translateZ(0)" }}
           >

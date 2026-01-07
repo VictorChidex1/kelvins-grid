@@ -19,7 +19,7 @@ export const initialProducts: Product[] = [
       "(2) 320W Solar panels",
     ],
     stock: 10,
-    imageUrl: "/images/1kva-inverter.png",
+    imageUrl: "/images/1kva-inverter.webp",
     loadCapacity: "1KVA",
   },
   {
@@ -37,7 +37,7 @@ export const initialProducts: Product[] = [
       "(4) 320W solar panels",
     ],
     stock: 5,
-    imageUrl: "/images/2.5kva-inverter.png", // Renamed to remove space
+    imageUrl: "/images/2.5kva-inverter.webp", // Renamed to remove space
     loadCapacity: "2.5KVA",
     isFeatured: true,
   },
@@ -56,7 +56,7 @@ export const initialProducts: Product[] = [
       "MPPT charge controller",
     ],
     stock: 3,
-    imageUrl: "/images/3.5kva-inverter.png",
+    imageUrl: "/images/3.5kva-inverter.webp",
     loadCapacity: "3.5KVA",
   },
   {
@@ -75,7 +75,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 6,
-    imageUrl: "/images/5kva-inverter.png",
+    imageUrl: "/images/5kva-inverter.webp",
     badge: "Premium",
     loadCapacity: "5kVA",
     isFeatured: true,
@@ -95,7 +95,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 5,
-    imageUrl: "/images/7.5kva-inverter.png",
+    imageUrl: "/images/7.5kva-inverter.webp",
     badge: "Premium",
     loadCapacity: "7.5kVA",
     isFeatured: true,
@@ -116,7 +116,7 @@ export const initialProducts: Product[] = [
       "Installation Included",
     ],
     stock: 5,
-    imageUrl: "/images/10kva-inverter.png",
+    imageUrl: "/images/10kva-inverter.webp",
     badge: "Premium",
     loadCapacity: "10kVA",
     isFeatured: true,
@@ -135,7 +135,7 @@ export const initialProducts: Product[] = [
       "App Configuration",
     ],
     stock: 20,
-    imageUrl: "/images/starlink-installation.png",
+    imageUrl: "/images/starlink-installation.webp",
     badge: "Hot",
   },
   {
@@ -153,7 +153,7 @@ export const initialProducts: Product[] = [
       "Installation & Cabling",
     ],
     stock: 15,
-    imageUrl: "/images/cctv-installation.png",
+    imageUrl: "/images/cctv-installation.webp",
   },
 ];
 
