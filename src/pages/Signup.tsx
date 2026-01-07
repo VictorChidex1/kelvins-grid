@@ -9,20 +9,29 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const { signup } = useAuth(); // AuthContext handles loading internally for user state, but we might want local loading UI
+  const { signup } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Real-time Validation Logic
+  const hasUpper = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const hasLength = password.length >= 6;
+  const passwordsMatch = password === confirmPassword && password !== "";
+
+  const isFormValid =
+    hasUpper && hasNumber && hasSpecial && hasLength && passwordsMatch;
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      return setError("Passwords do not match");
-    }
+    if (!isFormValid) return; // Should be disabled, but extra safety
+
     try {
       setError("");
       setLoading(true);
       await signup(email, password);
-      navigate("/admin"); // Or /login? Usually auto-login after signup. Firebase auto-logs in.
+      navigate("/admin");
     } catch (err: any) {
       console.error(err);
       setError("Failed to create an account. " + err.message);
@@ -118,6 +127,38 @@ export function Signup() {
             </button>
           </div>
 
+          {/* Password Strength Indicators */}
+          <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
+            <div
+              className={`flex items-center gap-1 ${
+                hasLength ? "text-green-500" : ""
+              }`}
+            >
+              <span>•</span> At least 8 characters
+            </div>
+            <div
+              className={`flex items-center gap-1 ${
+                hasUpper ? "text-green-500" : ""
+              }`}
+            >
+              <span>•</span> One uppercase letter
+            </div>
+            <div
+              className={`flex items-center gap-1 ${
+                hasNumber ? "text-green-500" : ""
+              }`}
+            >
+              <span>•</span> One number
+            </div>
+            <div
+              className={`flex items-center gap-1 ${
+                hasSpecial ? "text-green-500" : ""
+              }`}
+            >
+              <span>•</span> One special character
+            </div>
+          </div>
+
           <div className="relative">
             <label className="block text-sm text-slate-400 mb-2">
               Confirm Password
@@ -126,10 +167,15 @@ export function Signup() {
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-brand-950 border border-brand-800 rounded-lg px-4 py-3 text-white focus:border-action focus:outline-none focus:ring-1 focus:ring-action transition-colors pr-10"
+              className={`w-full bg-brand-950 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-1 focus:ring-action transition-colors pr-10
+                ${
+                  confirmPassword && !passwordsMatch
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-brand-800 focus:border-action"
+                }
+              `}
               placeholder="••••••••"
               required
-              minLength={6}
             />
             <button
               type="button"
@@ -176,8 +222,14 @@ export function Signup() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-action text-brand-950 font-bold py-3 rounded-lg hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            disabled={loading || !isFormValid}
+            className={`w-full font-bold py-3 rounded-lg transition-all mt-2
+              ${
+                isFormValid
+                  ? "bg-action text-brand-950 hover:bg-white cursor-pointer"
+                  : "bg-slate-700 text-slate-400 cursor-not-allowed opacity-50"
+              }
+            `}
           >
             {loading ? "Creating Account..." : "Sign Up"}
           </button>
