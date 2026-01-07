@@ -46,6 +46,10 @@ export function Login() {
         <h2 className="text-3xl font-heading mb-6 text-center text-white">
           Welcome <span className="text-action">Back</span>
         </h2>
+        <p className="text-center text-slate-400 mb-6">
+          Securely login to view your current orders and manage your delivery
+          details.
+        </p>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-lg mb-6 text-sm">
