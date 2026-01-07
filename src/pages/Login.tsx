@@ -43,6 +43,25 @@ export function Login() {
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
 
       <div className="w-full max-w-md bg-brand-900 border border-brand-800 rounded-xl p-8 shadow-2xl z-10">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4 group md:hidden"
+        >
+          <svg
+            className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span className="text-sm font-medium">Home</span>
+        </Link>
         <h2 className="text-3xl font-heading mb-6 text-center text-white">
           Welcome <span className="text-action">Back</span>
         </h2>

@@ -10,7 +10,8 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { db, auth } from "../lib/firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -41,7 +42,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    // Create User Profile in Firestore (RBAC)
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email,
+      role: "customer",
+      createdAt: new Date().toISOString(),
+    });
   };
 
   const googleLogin = async () => {
