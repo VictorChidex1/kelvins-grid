@@ -46,7 +46,12 @@ export function AdminLayout() {
             Management
           </div>
           <p className="px-4 text-sm text-slate-400">Products (Active)</p>
-          <p className="px-4 text-sm text-slate-400 opacity-50">Users (Soon)</p>
+          <Link
+            to="/admin/clients"
+            className="block px-4 py-2 mt-1 rounded-lg hover:bg-brand-800 text-slate-400 hover:text-white transition-colors"
+          >
+            Clients
+          </Link>
         </nav>
 
         <button

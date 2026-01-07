@@ -15,6 +15,8 @@ import { Signup } from "./pages/Signup";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
+import { ClientsList } from "./pages/admin/ClientsList";
+import { ClientDetail } from "./pages/admin/ClientDetail";
 import { Settings } from "./pages/Settings";
 
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
@@ -71,6 +73,8 @@ function App() {
             {/* Admin Routes (Protected, No Public Navbar) */}
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
+              <Route path="clients" element={<ClientsList />} />
+              <Route path="clients/:userId" element={<ClientDetail />} />
             </Route>
           </Routes>
         </div>
