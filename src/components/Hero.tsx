@@ -46,7 +46,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full max-w-screen-2xl mx-auto px-6 mt-32 mb-20 h-[800px] md:h-[750px] rounded-2xl overflow-hidden shadow-2xl group border border-brand-800/50 bg-brand-950">
+    <section className="relative w-full mt-0 mb-20 h-[800px] md:h-[750px] overflow-hidden shadow-2xl group border-b border-brand-800/50 bg-brand-950">
       {/* 0. ALIVE GRID BACKGROUND (Animated Overlay) */}
       <motion.div
         initial={{ opacity: 0 }}
