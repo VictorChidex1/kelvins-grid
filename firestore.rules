@@ -24,6 +24,11 @@ service cloud.firestore {
       // 2. They are NOT trying to make themselves admin (role must be 'customer')
       allow create: if isOwner(userId) && request.resource.data.role == "customer";
       
+      // Locations Subcollection (User Specific)
+      match /locations/{locationId} {
+        allow read, write: if isOwner(userId);
+      }
+
       // Allow updates if:
       // 1. It's their own ID OR they are an admin
       // 2. AND they are NOT changing their 'role' (Only admins can change roles)
@@ -31,21 +36,7 @@ service cloud.firestore {
                     (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) || isAdmin());
     }
 
-// Helper: Check if user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
-    }
 
-    // Helper: Check if user is accessing their own folder
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
-    }
-
-    // Profile Pictures: Public Read, Owner Write
-    match /profile_pictures/{userId} {
-      allow read: if true;
-      allow write: if isOwner(userId) && request.resource.size < 2 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
-    }
 
     // Products: Public Read, Admin Write
     match /products/{product} {

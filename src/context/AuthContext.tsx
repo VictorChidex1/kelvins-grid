@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { LoadingScreen } from "../components/ui/LoadingScreen";
 import type { ReactNode } from "react";
 import {
   onAuthStateChanged,
@@ -169,7 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         reauthenticate,
       }}
     >
-      {!loading && children}
+      {loading ? <LoadingScreen /> : children}
     </AuthContext.Provider>
   );
 }

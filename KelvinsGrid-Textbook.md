@@ -610,5 +610,109 @@ try {
 }
 ```
 
-**Key Takeaway:**
-Code executes top-to-bottom. By placing `await reauthenticate()` _before_ the update logic, we use JavaScript's own flow control (Promises) as a security gate. If the Promise rejects (error), the code _jumps_ to the `catch` block, skipping the update entirely.
+## 🏗️ Module 6: Advanced Architecture (Refactoring)
+
+In this session, we performed a **Refactor**. We didn't change _what_ the app does (the features are the same), but we changed _how_ it is built.
+
+### Lesson 6.1: The "Monolith" vs. "Composition"
+
+**The Old Way (Monolith):**
+We had one big file: `Settings.tsx`.
+Inside it, we had:
+
+- Profile Picture Logic
+- Name/Email Inputs
+- Password Change Logic
+- Account Deletion Logic
+- API Calls for all of the above
+
+**The Problem:**
+Reading a 400-line file is hard. If you want to fix a bug in the "Password" section, you have to scroll past 300 lines of "Profile" code.
+
+**The New Way (Composition):**
+We split the monolith into three files:
+
+1.  **`Settings.tsx` (The Container):** It only cares about _Layout_ (Sidebar + Content Box).
+2.  **`ProfileForm.tsx` (The Child):** It only cares about _User Details_.
+3.  **`SecurityForm.tsx` (The Child):** It only cares about _Passwords & Danger Zone_.
+
+**Teacher's Note:**
+This is called **Separation of Concerns**. `Settings.tsx` is the "Manager". `ProfileForm` and `SecurityForm` are the "Specialists".
+
+### Lesson 6.2: The "Active Tab" State
+
+**The Logic:**
+How does the page know which form to show?
+We used a simple "Switch" logic using React State.
+
+**The Code (`Settings.tsx`):**
+
+```tsx
+// 1. Define the possible states (TypeScript specific)
+type Tab = "profile" | "security";
+
+export function Settings() {
+  // 2. Create the switch
+  const [activeTab, setActiveTab] = useState<Tab>("profile");
+
+  return (
+    <div>
+      {/* 3. The Controller (Sidebar Buttons) */}
+      <button onClick={() => setActiveTab("profile")}>My Profile</button>
+      <button onClick={() => setActiveTab("security")}>Security</button>
+
+      {/* 4. The View (Conditional Rendering) */}
+      <div>{activeTab === "profile" ? <ProfileForm /> : <SecurityForm />}</div>
+    </div>
+  );
+}
+```
+
+**Deep Dive:**
+
+- **`activeTab`**: This variable holds the "Memory" of what the user clicked.
+- **`activeTab === "profile" ? A : B`**: This is a **Ternary Operator**. It asks: "Is the tab 'profile'? If YES, show Form A. If NO, show Form B."
+
+### Lesson 6.3: The Grid Layout System
+
+**The Goal:**
+
+- **Mobile:** Stacked list (Sidebar on top, content below).
+- **Desktop:** Side-by-Side (Sidebar Left, Content Right).
+
+**The Code (Tailwind):**
+
+```tsx
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+  {/* Sidebar: Takes 3 slots */}
+  <div className="lg:col-span-3"> ... </div>
+
+  {/* Content: Takes 9 slots */}
+  <div className="lg:col-span-9"> ... </div>
+</div>
+```
+
+**The Math:**
+
+- A standard grid has **12 Columns**.
+- `3 + 9 = 12`. Perfect fit.
+- On Mobile (default `grid-cols-1`), each item takes the full width, so they stack naturally.
+- On Large Screens (`lg:`), the CSS "snaps" them into the 3/9 split.
+
+### Lesson 6.4: Polymorphic Buttons (Active States)
+
+**The Goal:**
+The button for the _Active_ tab should look different (highlighted) than the _Inactive_ tab.
+
+**The Code:**
+
+```tsx
+className={`w-full ... transition-all ${
+  activeTab === "profile"
+    ? "bg-brand-900 border-l-4 border-action" // Active Style
+    : "text-slate-400 hover:text-white"       // Inactive Style
+}`}
+```
+
+**Teacher's Note:**
+We use a template string (backticks) to inject logic _inside_ the CSS class string. This allows the visual design to react instantly to the state change.

@@ -14,9 +14,16 @@ service firebase.storage {
     }
 
     // Profile Pictures: Public Read, Owner Write
+    // Path: /profile_pictures/{userId}/{filename}
     match /profile_pictures/{userId} {
+      
+      // 1. READ: Anyone can see the picture (Public Profile)
       allow read: if true;
-      allow write: if isOwner(userId) && request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+      
+      // 2. WRITE: Only the owner can upload, with strict validation
+      allow write: if isOwner(userId)                   // Must match Auth ID
+                   && request.resource.size < 2 * 1024 * 1024 // Max Size: 2MB (2 * 1024 * 1024 bytes)
+                   && request.resource.contentType.matches('image/.*'); // Must be an image (png, jpg, etc.)
     }
     
     // Default: Deny
