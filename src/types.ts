@@ -1,3 +1,13 @@
+export interface Location {
+  id: string;
+  name: string; // e.g. "Home", "The Farm"
+  type: "Residential" | "Commercial" | "Industrial" | "Farm";
+  address: string;
+  city: string;
+  accessNotes?: string; // e.g. "Gate code 1234"
+  isPrimary?: boolean;
+}
+
 export interface Product {
   id: string;
   title: string;

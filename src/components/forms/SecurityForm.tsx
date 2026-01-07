@@ -126,7 +126,7 @@ export function SecurityForm() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full bg-brand-950 border border-brand-800 rounded-lg px-4 py-2.5 text-white focus:border-action focus:ring-1 focus:ring-action focus:outline-none transition-all"
-                placeholder="Min 6 chars"
+                placeholder="Min 8 characters"
               />
             </div>
             <div>

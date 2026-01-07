@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { User, Shield } from "lucide-react";
+import { User, Shield, MapPin } from "lucide-react";
 import { ProfileForm } from "../components/forms/ProfileForm";
 import { SecurityForm } from "../components/forms/SecurityForm";
+import { LocationForm } from "../components/forms/LocationForm";
 
-type Tab = "profile" | "security";
+type Tab = "profile" | "security" | "locations";
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
@@ -42,12 +43,25 @@ export function Settings() {
               <Shield size={18} />
               Login & Security
             </button>
+            <button
+              onClick={() => setActiveTab("locations")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                activeTab === "locations"
+                  ? "bg-brand-900 border-l-4 border-action text-white shadow-lg"
+                  : "text-slate-400 hover:bg-brand-900/50 hover:text-white"
+              }`}
+            >
+              <MapPin size={18} />
+              Locations
+            </button>
           </div>
 
           {/* Main Content Area (9 Cols) */}
           <div className="lg:col-span-9">
             <div className="bg-brand-900/50 border border-brand-800 rounded-2xl p-6 lg:p-10 shadow-2xl backdrop-blur-sm">
-              {activeTab === "profile" ? <ProfileForm /> : <SecurityForm />}
+              {activeTab === "profile" && <ProfileForm />}
+              {activeTab === "security" && <SecurityForm />}
+              {activeTab === "locations" && <LocationForm />}
             </div>
           </div>
         </div>

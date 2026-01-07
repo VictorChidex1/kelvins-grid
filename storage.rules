@@ -1,0 +1,27 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if user is accessing their own folder
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // Profile Pictures: Public Read, Owner Write
+    match /profile_pictures/{userId} {
+      allow read: if true;
+      allow write: if isOwner(userId) && request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/.*');
+    }
+    
+    // Default: Deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
