@@ -536,5 +536,79 @@ We changed our strategy to **Context-Aware Positioning**.
 **Key Takeaway:**
 Responsive Design isn't just about resizing columns. It's about changing the **Layout Structure** to fit the device.
 
-- **Desktop:** Navigation is global (Navbar).
-- **Mobile:** Navigation is contextual (Back button inside the form).
+### Lesson 4.0: The SPA Routing Fix (Vercel)
+
+**The Problem:**
+React is a "Single Page Application" (SPA).
+
+- You visit `/`. The server sends `index.html`.
+- You click "About". JavaScript changes the URL to `/about`.
+- You **Refresh** the page. The browser asks the server for `/about`.
+- The server (Vercel) says: _"I don't have a file named `about`."_ -> **404 Error.**
+
+**The Solution (`vercel.json`):**
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+- **`"source": "/(.*)"`**: Match ANY URL request.
+- **`"destination": "/index.html"`**: Ignore the URL path and just verify send `index.html`.
+- Once `index.html` loads, React Router wakes up, reads the URL, and renders the correct page.
+
+---
+
+## 🔒 Module 5: Security & High-Stakes Actions
+
+You implemented a settings page. But a settings page is dangerous. It allows users to delete data or lock themselves out.
+
+### Lesson 5.1: The "Re-authentication" Pattern (The Nuclear Key)
+
+**The Scenario:**
+You walk away from your laptop at a coffee shop. Someone sits down and tries to change your password to lock you out.
+If we just allowed `updatePassword()`, they would succeed.
+
+**The Solution:**
+We implemented a **Re-authentication Challenge**. This forces the user to prove they are the owner _right now_, not just that they logged in yesterday.
+
+**The Code (`AuthContext.tsx`):**
+
+```typescript
+const reauthenticate = async (password: string) => {
+  // 1. Create a "Credential" object
+  const credential = EmailAuthProvider.credential(
+    auth.currentUser.email,
+    password
+  );
+
+  // 2. Send it to Firebase to verify
+  await reauthenticateWithCredential(auth.currentUser, credential);
+};
+```
+
+**The Logic:**
+
+1.  **`EmailAuthProvider.credential`**: This function bundles the user's email and the _typed_ password into a "Key".
+2.  **`reauthenticateWithCredential`**: Firebase checks this Key against its database.
+    - If valid: The user's "Freshness Token" is renewed.
+    - If invalid: It throws an error (`auth/wrong-password`).
+
+**The Usage (`Settings.tsx`):**
+
+```typescript
+try {
+  // STEP 1: The Gatekeeper
+  await reauthenticate(currentPassword);
+
+  // STEP 2: The Critical Action (Only runs if Step 1 passes)
+  await updateUserPassword(newPassword);
+} catch (error) {
+  // STEP 3: The Guard Dog
+  setMessage("Incorrect current password.");
+}
+```
+
+**Key Takeaway:**
+Code executes top-to-bottom. By placing `await reauthenticate()` _before_ the update logic, we use JavaScript's own flow control (Promises) as a security gate. If the Promise rejects (error), the code _jumps_ to the `catch` block, skipping the update entirely.
