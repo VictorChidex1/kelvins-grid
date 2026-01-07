@@ -29,6 +29,11 @@ service cloud.firestore {
         allow read, write: if isOwner(userId);
       }
 
+      // Systems Subcollection (User Specific)
+      match /systems/{systemId} {
+        allow read, write: if isOwner(userId);
+      }
+
       // Allow updates if:
       // 1. It's their own ID OR they are an admin
       // 2. AND they are NOT changing their 'role' (Only admins can change roles)

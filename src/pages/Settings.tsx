@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { User, Shield, MapPin } from "lucide-react";
+import { User, Shield, MapPin, Server } from "lucide-react";
 import { ProfileForm } from "../components/forms/ProfileForm";
 import { SecurityForm } from "../components/forms/SecurityForm";
 import { LocationForm } from "../components/forms/LocationForm";
+import { SystemForm } from "../components/forms/SystemForm";
 
-type Tab = "profile" | "security" | "locations";
+type Tab = "profile" | "security" | "locations" | "systems";
 
 export function Settings() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
@@ -54,6 +55,17 @@ export function Settings() {
               <MapPin size={18} />
               Locations
             </button>
+            <button
+              onClick={() => setActiveTab("systems")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                activeTab === "systems"
+                  ? "bg-brand-900 border-l-4 border-action text-white shadow-lg"
+                  : "text-slate-400 hover:bg-brand-900/50 hover:text-white"
+              }`}
+            >
+              <Server size={18} />
+              My Systems
+            </button>
           </div>
 
           {/* Main Content Area (9 Cols) */}
@@ -62,6 +74,7 @@ export function Settings() {
               {activeTab === "profile" && <ProfileForm />}
               {activeTab === "security" && <SecurityForm />}
               {activeTab === "locations" && <LocationForm />}
+              {activeTab === "systems" && <SystemForm />}
             </div>
           </div>
         </div>

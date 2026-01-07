@@ -30,3 +30,13 @@ export interface Product {
   imageUrl?: string;
   stock?: number;
 }
+
+export interface System {
+  id: string;
+  name: string;
+  type: "Inverter" | "Solar Panels" | "CCTV" | "Starlink" | "Other";
+  status: "Active" | "Maintenance" | "Offline";
+  locationId: string;
+  installedAt?: any; // Firestore Timestamp
+  notes?: string;
+}
