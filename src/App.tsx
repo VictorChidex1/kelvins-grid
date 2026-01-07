@@ -18,7 +18,6 @@ import { Dashboard } from "./pages/admin/Dashboard";
 import { ClientsList } from "./pages/admin/ClientsList";
 import { ClientDetail } from "./pages/admin/ClientDetail";
 import { Settings } from "./pages/Settings";
-import { ScrollToTop } from "./components/ScrollToTop";
 
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AuthProvider } from "./context/AuthContext";
@@ -26,7 +25,6 @@ import { AuthProvider } from "./context/AuthContext";
 function App() {
   return (
     <Router>
-      <ScrollToTop />
       <AuthProvider>
         <div className="relative min-h-screen bg-brand-950 font-sans selection:bg-action selection:text-brand-950 overflow-x-hidden">
           {/* Background Grid Pattern (Global) */}
