@@ -46,7 +46,10 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full mt-0 mb-20 h-[800px] md:h-[750px] overflow-hidden shadow-2xl group border-b border-brand-800/50 bg-brand-950">
+    <section
+      className="relative w-full mt-0 mb-20 h-[800px] md:h-[750px] overflow-hidden shadow-2xl group border-b border-brand-800/50 bg-brand-950"
+      style={{ willChange: "transform" }} // Hint to browser to keep this layer active
+    >
       {/* 0. ALIVE GRID BACKGROUND (Animated Overlay) */}
       <motion.div
         initial={{ opacity: 0 }}

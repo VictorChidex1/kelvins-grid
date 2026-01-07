@@ -1183,4 +1183,50 @@ We used `h-[800px] md:h-[750px]`.
 Why is mobile TALLER (800px) than Desktop (750px)?
 
 - **Desktop:** Wide aspect ratio. We have width, so we don't need excessive height.
-- **Mobile:** Narrow aspect ratio. Content stacks vertically. We need the extra height to fit the Headline + Subtext + Buttons without cramping them.
+
+---
+
+## 🏎️ Module 16: Mobile Performance (The Safari Fix)
+
+You noticed that Safari on iPhone was "Loading Slowly" while scrolling.
+This wasn't a network issue. It was a **Rendering Pipeline** issue.
+
+### The Problem: "Lazy" Scroll Events
+
+iOS halts JavaScript execution while the finger is on the screen (during the scroll). It only fires events _after_ the momentum stops.
+
+- **Result:** The user scrolls down. The element is _technically_ on screen. But the "Show Animation" code doesn't run until 200ms later when the scroll stops. This looks like lag.
+
+### The Solution 1: Aggressive Pre-Loading (`viewport.margin`)
+
+We changed the "Trigger Line."
+
+**Old Code:**
+
+```tsx
+viewport={{ once: true, amount: 0.1 }}
+// "Start loading when 10% of the item is VISIBLE."
+```
+
+**New Code:**
+
+```tsx
+viewport={{ once: true, margin: "600px" }}
+// "Start loading when the item is 600px BELOW the screen."
+```
+
+**Why this fixes it:**
+By the time your thumb actually scrolls to the product, the animation triggered 0.5 seconds ago. It's already waiting for you. **Zero perceived latency.**
+
+### The Solution 2: GPU Layering (`will-change`)
+
+You noticed the Hero section "re-loading" when scrolling up.
+This is because Safari tries to save memory by "throwing away" the pixels of large images when they go off-screen. When you scroll back, it has to "repaint" them.
+
+**The Fix:**
+
+```tsx
+style={{ willChange: "transform" }}
+```
+
+This tells the browser: _"Do not delete this layer. Keep it in the Video Memory (GPU)."_ prevents the white flash or repaint lag when returning to the top.
