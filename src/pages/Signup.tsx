@@ -11,9 +11,20 @@ export function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const { signup } = useAuth();
+  const { signup, googleLogin } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleGoogleSignup = async () => {
+    try {
+      setError("");
+      await googleLogin();
+      navigate("/dashboard");
+    } catch (err: any) {
+      console.error(err);
+      setError("Failed to sign up with Google.");
+    }
+  };
 
   // Real-time Validation Logic
   const hasUpper = /[A-Z]/.test(password);
@@ -88,6 +99,30 @@ export function Signup() {
             {error}
           </div>
         )}
+
+        {/* Google Sign Up */}
+        <button
+          onClick={handleGoogleSignup}
+          className="w-full bg-white text-brand-950 font-bold py-3 rounded-lg flex items-center justify-center gap-3 hover:bg-slate-100 transition-colors mb-6"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          Sign up with Google
+        </button>
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-brand-800"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-brand-900 text-slate-400">
+              Or continue with email
+            </span>
+          </div>
+        </div>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>

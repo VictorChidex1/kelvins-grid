@@ -1129,4 +1129,58 @@ In a real business, Kelvin shouldn't call a developer to add a new inverter. He 
 3.  **Phase 3 (Admin CMS):** Products are managed via a UI (`/admin/products`). **<-- WE ARE HERE.**
 
 **Moving Forward:**
-We are done with Seeding. The next step is to build the **Product Editor** in the Admin Dashboard so you can manage inventory without touching code.
+
+---
+
+## 📺 Module 15: Advanced Layouts (Full-Width Immersion)
+
+In this session, we modified the **Hero Section** to go from a "Boxed Layout" to a "Cinematic Full-Width Layout."
+
+### Lesson 15.1: Breaking the Box Model
+
+**The Old Code (Boxed):**
+
+```tsx
+<section className="max-w-screen-2xl mx-auto px-6 ...">
+```
+
+- **`max-w-screen-2xl`**: This is a "Constraint." It tells the div: "Grow as big as you want, but stop at 1536px."
+- **`mx-auto`**: Margin X Axis Auto. Center the box if the screen is bigger than 1536px.
+- **`px-6`**: Padding X Axis. "Don't touch the edges of the screen."
+
+**The New Code (Immersive):**
+
+```tsx
+<section className="w-full ...">
+```
+
+- **`w-full`**: "Take up 100% of the parent (the browser window)."
+- **Removed Constraints:** We deleted `max-w` and `px`.
+
+**Teacher's Note:**
+Modern web design often mixes these two.
+
+- **Content (Text)** usually lives in a "Container" (so it doesn't stretch too wide to read).
+- **Visuals (Hero Images)** often break out to being "Full Width" to feel premium.
+
+### Lesson 15.2: Z-Index Layering (The "Stack")
+
+When you make something full-width, you risk covering up other things (like the Navbar).
+
+**The Stack:**
+
+1.  **Navbar (`z-50`)**: The Pilot. Always on top. Fixed position.
+2.  **Hero Text (`z-20`)**: The Content. Must be readable above the image.
+3.  **Hero HUD (`z-10`)**: The Interface. sits between text and image.
+4.  **Hero Image (`z-0`)**: The Background.
+
+**The Fix:**
+Because our Navbar was already `fixed top-0 z-50`, expanding the hero _underneath_ it worked perfectly. The Hero starts at `top` (margin-top-0), but we added `mb-20` (Margin Bottom) to push the next section away.
+
+### Lesson 15.3: Responsive Height
+
+We used `h-[800px] md:h-[750px]`.
+Why is mobile TALLER (800px) than Desktop (750px)?
+
+- **Desktop:** Wide aspect ratio. We have width, so we don't need excessive height.
+- **Mobile:** Narrow aspect ratio. Content stacks vertically. We need the extra height to fit the Headline + Subtext + Buttons without cramping them.
