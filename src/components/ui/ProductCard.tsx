@@ -7,16 +7,13 @@ interface ProductCardProps {
   product: Product;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
-  // Format price to Naira currency
-  const formatPrice = (amount: number) => {
-    return new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: "NGN",
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
+const CURRENCY_FORMATTER = new Intl.NumberFormat("en-NG", {
+  style: "currency",
+  currency: "NGN",
+  minimumFractionDigits: 0,
+});
 
+export function ProductCard({ product }: ProductCardProps) {
   // Determine Overlay Icon
   const getOverlayIcon = () => {
     switch (product.category) {
@@ -61,14 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="w-full md:w-2/5 relative bg-white p-6 flex items-center justify-center overflow-hidden">
           {/* Category Icon Overlay */}
           {overlayIcon && (
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 opacity-10">
-              {/* Watermark effect or Keep it clean? User asked for icon on image. 
-                   Let's place it as a floating badge like the screenshot. 
-                   Screenshot showed it floating near the product. 
-                   Let's put it top-left or centered-floating.
-                   Actually, let's look at the users screenshot description again. "circular white icon buttons overlaying the product images". 
-               */}
-            </div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 opacity-10"></div>
           )}
 
           {/* Primary Product Image */}
@@ -80,6 +70,8 @@ export function ProductCard({ product }: ProductCardProps) {
               }}
               src={product.imageUrl}
               alt={product.title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-contain relative z-10"
             />
           ) : (
@@ -122,7 +114,7 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.title}
             </h3>
             <div className="text-2xl md:text-3xl font-heading text-action mb-6">
-              {formatPrice(product.price)}
+              {CURRENCY_FORMATTER.format(product.price)}
             </div>
 
             <div className="space-y-4 mb-6">
