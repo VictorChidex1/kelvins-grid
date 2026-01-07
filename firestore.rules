@@ -26,12 +26,12 @@ service cloud.firestore {
       
       // Locations Subcollection (User Specific)
       match /locations/{locationId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
 
       // Systems Subcollection (User Specific)
       match /systems/{systemId} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
 
       // Allow updates if:

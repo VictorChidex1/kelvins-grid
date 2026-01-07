@@ -819,4 +819,108 @@ When a user adds a system, they can't just type "Home". They must select from _e
 3.  **Validation:** If `locations.length === 0`, disable the form. You can't install a system in the void.
 
 **Key Takeaway:**
-We are enforcing **Data Integrity** on the frontend. We ensure every System has a physical home.
+
+---
+
+## 🦅 Module 10: Admin Architecture ("God Mode")
+
+You asked: _"How did we implement the Client Manager? Explain the logic and code."_
+
+This module covers **Admin Dashboard Engineering**. We are no longer just "users" interacting with our own data. We are "Superusers" peering into other people's data.
+
+### Lesson 10.1: The "God View" Logic
+
+In `SystemForm.tsx`, we used `user.uid` to say "Get **MY** systems".
+In `ClientDetail.tsx`, we use `userId` (from the URL) to say "Get **THEIR** systems".
+
+**The Terminology:**
+
+1.  **Dynamic Routing:** The URL `/admin/clients/abc-123` contains variable data (`abc-123`).
+2.  **Path Parameter:** The `abc-123` part is called a parameter. We named it `:userId` in `App.tsx`.
+3.  **Subcollection Querying:** Fetching data nested _deep_ inside another document.
+
+### Lesson 10.2: Code Walkthrough (`ClientDetail.tsx`)
+
+Let's break down the "Magic" block of code that fetches the data.
+
+```typescript
+// 1. The Hook
+const { userId } = useParams();
+// EXPLANATION: React Router looks at the URL.
+// If URL is "/admin/clients/victor", then userId = "victor".
+
+useEffect(() => {
+  const fetchData = async () => {
+
+    // 2. Fetch the Parent (The User Profile)
+    // "Go to 'users' drawer, pull out file 'victor'"
+    const userDoc = await getDoc(doc(db, "users", userId));
+
+    // 3. Fetch the Children (The Subcollections)
+    // "Open Victor's file, look in the 'locations' folder"
+    const locRef = collection(db, "users", userId, "locations");
+    const locSnapshot = await getDocs(locRef);
+
+    // "Open Victor's file, look in the 'systems' folder"
+    const sysRef = collection(db, "users", userId, "systems");
+    const sysSnapshot = await getDocs(sysRef);
+
+    // 4. Update State
+    // We now have 3 pieces of data: Who they are, Where they live, What they own.
+    setClient(userDoc.data());
+    setLocations(locSnapshot.docs.map(...));
+    setSystems(sysSnapshot.docs.map(...));
+  };
+
+  fetchData();
+}, [userId]); // Run this every time 'userId' changes (e.g. clicking Next Client)
+```
+
+### Lesson 10.3: Visualizing the Data Path
+
+Imagine Firestore as a File Cabinet.
+
+**Normal User (Victor) logs in:**
+
+- Path: `users/victor/systems`
+- Limit: "Only let me see `users/victor`" (Enforced by Security Rules).
+
+**Admin (Kelvin) logs in:**
+
+- Kelvin goes to `/admin/clients`.
+- He sees a list of folders (Users).
+- He clicks "Victor".
+- The App takes `victor` ID and constructs the path: `users/victor/systems`.
+- **Security Rule Check:** "Is requester Admin? YES." -> "Access Granted."
+
+### Lesson 10.4: Why did we need `App.tsx`?
+
+We added this:
+
+```tsx
+<Route path="clients/:userId" element={<ClientDetail />} />
+```
+
+The colon `:` tells React Router: "This part is variable. Whatever is typed here, pass it to the component as `userId`."
+
+### Lesson 10.5: The Security Wall (Why data was missing)
+
+You noticed that _Ron's_ data was missing from _Kelvin's_ dashboard. Why?
+
+```javascript
+// OLD RULE
+allow read: if isOwner(userId);
+// Means: "Only Ron can see Ron's data".
+```
+
+When Kelvin (Admin) tried to read `users/ron/locations`, the door was locked.
+We fixed it by adding the **Master Key**:
+
+```javascript
+// NEW RULE
+allow read: if isOwner(userId) || isAdmin();
+// Means: "Ron can see it, AND Kelvin can see it."
+```
+
+**Key Takeaway:**
+Frontend code (`ClientDetail.tsx`) can ask for data, but the Backend (`firestore.rules`) has the final say. Always align your permissions with your features.

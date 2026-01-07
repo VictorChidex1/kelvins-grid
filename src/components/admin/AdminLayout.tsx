@@ -31,9 +31,19 @@ export function AdminLayout() {
     <div className="min-h-screen bg-brand-950 flex text-slate-200">
       {/* Sidebar */}
       <aside className="w-64 bg-brand-900 border-r border-brand-800 p-6 flex flex-col">
-        <h1 className="text-xl font-heading text-white mb-8 tracking-widest">
-          KELVIN'S <span className="text-action">GRID</span>
-        </h1>
+        <Link to="/" className="flex items-center gap-3 mb-8 group">
+          <img
+            src="/kelvins-grid-logo.png"
+            alt="Kelvin's Grid"
+            className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
+          />
+          <h1 className="text-xl font-heading text-white tracking-widest group-hover:text-action transition-colors">
+            KELVIN'S{" "}
+            <span className="text-action group-hover:text-white transition-colors">
+              GRID
+            </span>
+          </h1>
+        </Link>
 
         <nav className="flex-1 space-y-2">
           <Link
