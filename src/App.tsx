@@ -15,6 +15,8 @@ import { Signup } from "./pages/Signup";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
+import { Settings } from "./pages/dashboard/Settings";
+
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -63,6 +65,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/dashboard" element={<CustomerDashboard />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
 
             {/* Admin Routes (Protected, No Public Navbar) */}

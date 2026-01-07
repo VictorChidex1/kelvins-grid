@@ -8,9 +8,12 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendPasswordResetEmail,
+  updateProfile,
+  updatePassword,
+  deleteUser,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db, auth } from "../lib/firebase";
 
 export interface UserProfile {
@@ -18,6 +21,8 @@ export interface UserProfile {
   role: "admin" | "customer";
   fullName?: string;
   phone?: string;
+  photoURL?: string;
+  address?: string;
 }
 
 interface AuthContextType {
@@ -34,6 +39,9 @@ interface AuthContextType {
   googleLogin: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
+  updateUserPassword: (password: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -98,6 +106,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const updateUserProfile = async (data: Partial<UserProfile>) => {
+    if (!auth.currentUser) return;
+
+    // Update Firestore
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, data);
+
+    // Update Auth Profile (DisplayName/PhotoURL)
+    if (data.fullName || data.photoURL) {
+      await updateProfile(auth.currentUser, {
+        displayName: data.fullName,
+        photoURL: data.photoURL,
+      });
+    }
+
+    // Update Local State
+    setUserProfile((prev) => (prev ? { ...prev, ...data } : null));
+  };
+
+  const updateUserPassword = async (password: string) => {
+    if (auth.currentUser) {
+      await updatePassword(auth.currentUser, password);
+    }
+  };
+
+  const deleteAccount = async () => {
+    if (auth.currentUser) {
+      await deleteDoc(doc(db, "users", auth.currentUser.uid));
+      await deleteUser(auth.currentUser);
+      setUserProfile(null);
+      setUser(null);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -109,6 +151,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         googleLogin,
         logout,
         resetPassword,
+        updateUserProfile,
+        updateUserPassword,
+        deleteAccount,
       }}
     >
       {!loading && children}

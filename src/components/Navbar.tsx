@@ -55,11 +55,19 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-white font-bold hover:bg-brand-700 transition-colors focus:ring-2 focus:ring-action"
+                  className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-white font-bold hover:bg-brand-700 transition-colors focus:ring-2 focus:ring-action overflow-hidden"
                 >
-                  {userProfile?.fullName?.[0] ||
+                  {userProfile?.photoURL ? (
+                    <img
+                      src={userProfile.photoURL}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    userProfile?.fullName?.[0] ||
                     user.email?.[0]?.toUpperCase() ||
-                    "U"}
+                    "U"
+                  )}
                 </button>
 
                 {isProfileOpen && (
@@ -77,6 +85,14 @@ export function Navbar() {
                       <button className="w-full text-left px-4 py-2 text-sm text-slate-400 hover:text-white hover:bg-brand-800 transition-colors cursor-not-allowed">
                         Settings
                       </button>
+
+                      <Link
+                        to="/settings"
+                        className="block px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-brand-800 transition-colors"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        Settings
+                      </Link>
 
                       <Link
                         to="/dashboard"
@@ -156,22 +172,57 @@ export function Navbar() {
 
         {/* Mobile Menu Dropdown */}
         {isOpen && (
-          <div className="absolute top-20 left-6 right-6 glass-panel rounded-xl p-4 flex flex-col gap-4 md:hidden animate-in slide-in-from-top-2">
+          <div className="absolute top-20 left-6 right-6 glass-panel rounded-xl p-4 flex flex-col gap-4 md:hidden animate-in slide-in-from-top-2 border border-brand-800/50 shadow-2xl">
+            {/* User Info (Mobile) */}
+            {user && (
+              <div className="flex items-center gap-3 pb-4 border-b border-brand-800 mb-2">
+                <div className="w-10 h-10 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {userProfile?.photoURL ? (
+                    <img
+                      src={userProfile.photoURL}
+                      alt="Profile"
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    userProfile?.fullName?.[0] ||
+                    user.email?.[0]?.toUpperCase() ||
+                    "U"
+                  )}
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <p className="text-sm font-bold text-white truncate">
+                    {userProfile?.fullName || "User"}
+                  </p>
+                  <p className="text-xs text-slate-400 truncate">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="text-slate-300 hover:text-action font-medium py-2"
+                className="text-slate-300 hover:text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
               </a>
             ))}
+
             {user ? (
-              <>
+              <div className="border-t border-brand-800 pt-2 flex flex-col gap-1">
+                <Link
+                  to="/settings"
+                  className="text-slate-300 hover:text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors flex items-center gap-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Settings
+                </Link>
                 <Link
                   to="/dashboard"
-                  className="text-slate-300 hover:text-action font-medium py-2"
+                  className="text-slate-300 hover:text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors flex items-center gap-2"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
@@ -179,7 +230,7 @@ export function Navbar() {
                 {userProfile?.role === "admin" && (
                   <Link
                     to="/admin"
-                    className="text-action font-medium py-2"
+                    className="text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors flex items-center gap-2"
                     onClick={() => setIsOpen(false)}
                   >
                     Admin Panel
@@ -190,13 +241,13 @@ export function Navbar() {
                     handleLogout();
                     setIsOpen(false);
                   }}
-                  className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full"
+                  className="mt-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white font-bold py-3 rounded-lg w-full transition-all border border-red-500/20"
                 >
                   Logout
                 </button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="border-t border-brand-800 pt-4 flex flex-col gap-3">
                 <Link
                   to="/login"
                   className="text-center text-slate-300 hover:text-action font-medium py-2"
@@ -206,12 +257,12 @@ export function Navbar() {
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full text-center"
+                  className="bg-brand-800 text-white font-bold py-3 rounded-lg w-full text-center border border-brand-700"
                   onClick={() => setIsOpen(false)}
                 >
                   Sign Up
                 </Link>
-              </>
+              </div>
             )}
           </div>
         )}
