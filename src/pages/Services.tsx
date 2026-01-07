@@ -43,11 +43,11 @@ export function Services() {
       {/* Background Decor */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
       <motion.div
-        style={{ y: blob1Y }}
+        style={{ y: blob1Y, WebkitTransform: "translateZ(0)" }}
         className="absolute top-20 left-10 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none"
       />
       <motion.div
-        style={{ y: blob2Y }}
+        style={{ y: blob2Y, WebkitTransform: "translateZ(0)" }}
         className="absolute bottom-40 right-10 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[100px] pointer-events-none"
       />
 
@@ -100,7 +100,9 @@ export function Services() {
           <motion.div
             variants={containerVariants}
             initial="hidden"
-            animate="show"
+            whileInView="show"
+            viewport={{ once: true, margin: "200px" }}
+            style={{ WebkitTransform: "translateZ(0)" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             {products.length === 0 ? (
