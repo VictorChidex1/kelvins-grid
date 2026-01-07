@@ -20,8 +20,14 @@ export function ServicesSection() {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Show only top 3 products for the landing page
-  const featuredProducts = products.slice(0, 3);
+  // Select a mix of products: Top 2 Solar + Starlink + CCTV
+  const solarProducts = products
+    .filter((p) => p.category === "solar")
+    .slice(0, 2);
+  const otherProducts = products.filter(
+    (p) => p.category === "starlink" || p.category === "cctv"
+  );
+  const featuredProducts = [...solarProducts, ...otherProducts];
 
   const containerVariants = {
     hidden: { opacity: 0 },
