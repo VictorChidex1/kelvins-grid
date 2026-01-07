@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export function Signup() {
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,7 +23,13 @@ export function Signup() {
   const passwordsMatch = password === confirmPassword && password !== "";
 
   const isFormValid =
-    hasUpper && hasNumber && hasSpecial && hasLength && passwordsMatch;
+    hasUpper &&
+    hasNumber &&
+    hasSpecial &&
+    hasLength &&
+    passwordsMatch &&
+    fullName &&
+    phone;
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +38,7 @@ export function Signup() {
     try {
       setError("");
       setLoading(true);
-      await signup(email, password);
+      await signup(email, password, fullName, phone);
       navigate("/admin");
     } catch (err: any) {
       console.error(err);
@@ -78,6 +86,34 @@ export function Signup() {
         )}
 
         <form onSubmit={handleSignup} className="space-y-4">
+          <div>
+            <label className="block text-sm text-slate-400 mb-2">
+              Full Name
+            </label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              className="w-full bg-brand-950 border border-brand-800 rounded-lg px-4 py-3 text-white focus:border-action focus:outline-none focus:ring-1 focus:ring-action transition-colors"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-slate-400 mb-2">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="w-full bg-brand-950 border border-brand-800 rounded-lg px-4 py-3 text-white focus:border-action focus:outline-none focus:ring-1 focus:ring-action transition-colors"
+              placeholder="+234 (806) 000-0000"
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm text-slate-400 mb-2">Email</label>
             <input

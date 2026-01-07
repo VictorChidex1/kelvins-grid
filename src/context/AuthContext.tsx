@@ -17,7 +17,12 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string
+  ) => Promise<void>;
   googleLogin: () => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -41,7 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (
+    email: string,
+    password: string,
+    fullName: string,
+    phone: string
+  ) => {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -50,6 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Create User Profile in Firestore (RBAC)
     await setDoc(doc(db, "users", userCredential.user.uid), {
       email,
+      fullName,
+      phone,
       role: "customer",
       createdAt: new Date().toISOString(),
     });
