@@ -1931,3 +1931,125 @@ By using `/#portfolio` (Absolute), we tell the browser:
 4.  **Hydration:** When React takes over the static HTML and adds interactivity (like click listeners).
 
 We have now implemented **Type-Safe, Cross-Route, Smooth-Scrolling** navigation. This is the industry standard.
+
+## 🏛️ Module 25: The Architecture of Trust (The Footer)
+
+You asked for a detailed breakdown of the **Footer** implementation.
+While a footer looks simple, it is technically the "Anchor" of your layout.
+
+### 25.1 Semantic HTML (`<footer>`)
+
+**The Concept:**
+We didn't just use a generic `<div>`. We used the `<footer>` tag.
+**Why?**
+Screen Readers (for the blind) and Search Engines (Google) look for this tag to know: "The main content is over. Here is the legal and contact info." using correct semantic tags improves your **SEO Score**.
+
+### 25.2 The "URI Scheme" Protocols
+
+You asked how we made the phone and email clickable. We used **URI Schemes**.
+Surfing the web uses `http://` or `https://`. But browsers understand other protocols too.
+
+**1. The Phone Protocol (`tel:`):**
+
+```tsx
+<a href="tel:+2348102689080">+234 810 268 9080</a>
+```
+
+- **Logic:** When you click this, the browser looks for an app registered to handle `tel:` requests.
+- **On iPhone:** It opens the Phone app and pre-dials the number.
+- **On Desktop:** It might open Skype or ask to connect your phone.
+
+**2. The Mail Protocol (`mailto:`):**
+
+```tsx
+<a href="mailto:info@kelvinsgrid.com.ng">info@kelvinsgrid.com.ng</a>
+```
+
+- **Logic:** This triggers the default email client (Gmail App, Outlook, Apple Mail).
+
+### 25.3 Dynamic Date Generation
+
+We didn't hardcode "2024" or "2025". Hardcoding dates makes a site look abandoned next year.
+
+**The Code:**
+
+```tsx
+const currentYear = new Date().getFullYear();
+// ...
+<p>© {currentYear} Kelvin's Grid. All rights reserved.</p>;
+```
+
+**The Logic:**
+
+- `new Date()`: Get the current moment (Down to the millisecond).
+- `.getFullYear()`: Extract just the 4-digit year (e.g., 2026).
+- Result: On Jan 1st, 2027, your site will automatically update itself. This is **Maintenance-Free Engineering**.
+
+### 25.4 Reusing the Hash Link Logic
+
+We reused the `LinkComponent` logic from Module 24 in the footer.
+This ensures that if a user clicks "Portfolio" in the footer, it smooth-scrolls to the section just like the Navbar does.
+
+**Code Reuse (DRY Principle):**
+We didn't copy-paste the logic poorly. We followed the **DRY (Don't Repeat Yourself)** principle by implementing standard routing consistency across the app.
+
+## 🏛️ Module 25: The Architecture of Trust (The Footer)
+
+You asked for a detailed breakdown of the **Footer** implementation.
+While a footer looks simple, it is technically the "Anchor" of your layout.
+
+### 25.1 Semantic HTML (`<footer>`)
+
+**The Concept:**
+We didn't just use a generic `<div>`. We used the `<footer>` tag.
+**Why?**
+Screen Readers (for the blind) and Search Engines (Google) look for this tag to know: "The main content is over. Here is the legal and contact info." using correct semantic tags improves your **SEO Score**.
+
+### 25.2 The "URI Scheme" Protocols
+
+You asked how we made the phone and email clickable. We used **URI Schemes**.
+Surfing the web uses `http://` or `https://`. But browsers understand other protocols too.
+
+**1. The Phone Protocol (`tel:`):**
+
+```tsx
+<a href="tel:+2348102689080">+234 810 268 9080</a>
+```
+
+- **Logic:** When you click this, the browser looks for an app registered to handle `tel:` requests.
+- **On iPhone:** It opens the Phone app and pre-dials the number.
+- **On Desktop:** It might open Skype or ask to connect your phone.
+
+**2. The Mail Protocol (`mailto:`):**
+
+```tsx
+<a href="mailto:info@kelvinsgrid.com.ng">info@kelvinsgrid.com.ng</a>
+```
+
+- **Logic:** This triggers the default email client (Gmail App, Outlook, Apple Mail).
+
+### 25.3 Dynamic Date Generation
+
+We didn't hardcode "2024" or "2025". Hardcoding dates makes a site look abandoned next year.
+
+**The Code:**
+
+```tsx
+const currentYear = new Date().getFullYear();
+// ...
+<p>© {currentYear} Kelvin's Grid. All rights reserved.</p>;
+```
+
+**The Logic:**
+
+- `new Date()`: Get the current moment (Down to the millisecond).
+- `.getFullYear()`: Extract just the 4-digit year (e.g., 2026).
+- Result: On Jan 1st, 2027, your site will automatically update itself. This is **Maintenance-Free Engineering**.
+
+### 25.4 Reusing the Hash Link Logic
+
+We reused the `LinkComponent` logic from Module 24 in the footer.
+This ensures that if a user clicks "Portfolio" in the footer, it smooth-scrolls to the section just like the Navbar does.
+
+**Code Reuse (DRY Principle):**
+We didn't copy-paste the logic poorly. We followed the **DRY (Don't Repeat Yourself)** principle by implementing standard routing consistency across the app.
