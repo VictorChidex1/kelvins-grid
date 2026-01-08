@@ -2053,3 +2053,135 @@ This ensures that if a user clicks "Portfolio" in the footer, it smooth-scrolls 
 
 **Code Reuse (DRY Principle):**
 We didn't copy-paste the logic poorly. We followed the **DRY (Don't Repeat Yourself)** principle by implementing standard routing consistency across the app.
+
+## 🧠 Module 26: Lists, Loops, and Logic (The Testimonials)
+
+You asked for a deep dive into how the **Testimonials Section** works, specifically the **Images** and the **Verified Checkmark**.
+This module covers three core concepts of React: **Lists**, **Styling**, and **Conditionals**.
+
+### 26.1 The Power of `.map()` (The Loop)
+
+**The Concept:**
+In HTML, if you want 3 cards, you copy-paste the code 3 times.
+In React, we use **Data definition**.
+
+**The Logic:**
+
+1.  We created an **Array** of objects (`testimonials`).
+2.  We **Loop** through it using `.map()`.
+
+```tsx
+{
+  testimonials.map((testimonial, index) => (
+    <motion.div key={testimonial.id}> ... </motion.div>
+  ));
+}
+```
+
+- **Translation:** "For every item in the `testimonials` list, create a `motion.div`."
+- **Why?** If you ever need to add a 4th review, you just add data to the top of the file. You don't touch the UI code.
+
+### 26.2 Image Rendering Strategy (`object-cover`)
+
+**The Code:**
+
+```tsx
+<img src={testimonial.image} className="w-full h-full object-cover" />
+```
+
+**The Breakdown:**
+
+- `w-full h-full`: Forces the image to fill its parent container (the 48px circle).
+- **`object-cover`**: This is the magic CSS rule.
+  - _Without it:_ A rectangular photo squished into a circle looks distorted.
+  - _With it:_ The browser "zooms and crops" the image to fill the circle perfectly, keeping the aspect ratio. It acts like `background-size: cover`.
+
+### 26.3 Conditional Rendering (The `&&` Operator)
+
+You asked about the **Blue Verified Checkmark**.
+We used the **Logical AND Operator (`&&`)**.
+
+**The Code:**
+
+```tsx
+{
+  testimonial.verified && (
+    <svg>...</svg> // The Blue Checkmark
+  );
+}
+```
+
+**The Logic:**
+In JavaScript, `&&` checks if the left side is true.
+
+- **Scenario A (Verified User):** `true && <Icon />`. Result: **Render Icon**.
+- **Scenario B (Unverified User):** `false && <Icon />`. Result: **Stop. Render Nothing.**
+
+This allows us to control the UI based on data. It is the fundamental building block of "Dynamic" web apps.
+
+---
+
+## 🧠 Module 26: Lists, Loops, and Logic (The Testimonials)
+
+You asked for a deep dive into how the **Testimonials Section** works, specifically the **Images** and the **Verified Checkmark**.
+This module covers three core concepts of React: **Lists**, **Styling**, and **Conditionals**.
+
+### 26.1 The Power of `.map()` (The Loop)
+
+**The Concept:**
+In HTML, if you want 3 cards, you copy-paste the code 3 times.
+In React, we use **Data definition**.
+
+**The Logic:**
+
+1.  We created an **Array** of objects (`testimonials`).
+2.  We **Loop** through it using `.map()`.
+
+```tsx
+{
+  testimonials.map((testimonial, index) => (
+    <motion.div key={testimonial.id}> ... </motion.div>
+  ));
+}
+```
+
+- **Translation:** "For every item in the `testimonials` list, create a `motion.div`."
+- **Why?** If you ever need to add a 4th review, you just add data to the top of the file. You don't touch the UI code.
+
+### 26.2 Image Rendering Strategy (`object-cover`)
+
+**The Code:**
+
+```tsx
+<img src={testimonial.image} className="w-full h-full object-cover" />
+```
+
+**The Breakdown:**
+
+- `w-full h-full`: Forces the image to fill its parent container (the 48px circle).
+- **`object-cover`**: This is the magic CSS rule.
+  - _Without it:_ A rectangular photo squished into a circle looks distorted.
+  - _With it:_ The browser "zooms and crops" the image to fill the circle perfectly, keeping the aspect ratio. It acts like `background-size: cover`.
+
+### 26.3 Conditional Rendering (The `&&` Operator)
+
+You asked about the **Blue Verified Checkmark**.
+We used the **Logical AND Operator (`&&`)**.
+
+**The Code:**
+
+```tsx
+{
+  testimonial.verified && (
+    <svg>...</svg> // The Blue Checkmark
+  );
+}
+```
+
+**The Logic:**
+In JavaScript, `&&` checks if the left side is true.
+
+- **Scenario A (Verified User):** `true && <Icon />`. Result: **Render Icon**.
+- **Scenario B (Unverified User):** `false && <Icon />`. Result: **Stop. Render Nothing.**
+
+This allows us to control the UI based on data. It is the fundamental building block of "Dynamic" web apps.
