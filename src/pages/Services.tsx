@@ -167,35 +167,94 @@ export function Services() {
 
         {/* Product Grid */}
         {!isLoading && !error && (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {products.length === 0 ? (
-              <div className="col-span-full text-center py-20 text-slate-500">
-                No systems currently available. check back later.
-              </div>
-            ) : (
-              displayedProducts.map((product, index) => (
+          <>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24"
+            >
+              {displayedProducts.length === 0 ? (
+                <div className="col-span-full text-center py-20 text-slate-500">
+                  No systems found in this category.
+                </div>
+              ) : (
+                displayedProducts
+                  .filter((p) => p.category === "solar")
+                  .map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      variants={itemVariants}
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={{ once: true, margin: "50px" }}
+                      className="h-full"
+                    >
+                      <ProductCard
+                        product={product}
+                        priority={index < 2} // Prioritize first 2 images
+                      />
+                    </motion.div>
+                  ))
+              )}
+            </motion.div>
+
+            {/* Starlink & CCTV Section Header */}
+            {displayedProducts.some(
+              (p) => p.category === "starlink" || p.category === "cctv"
+            ) && (
+              <div className="flex flex-col items-center justify-center text-center mb-12 max-w-2xl mx-auto">
                 <motion.div
-                  key={product.id}
-                  variants={itemVariants}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "50px" }}
-                  className="h-full"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="flex items-center gap-2 mb-4 text-action font-mono text-xs tracking-widest uppercase"
                 >
-                  <ProductCard
-                    product={product}
-                    priority={index < 2} // Prioritize first 2 images
-                  />
+                  <span className="w-8 h-px bg-action"></span>
+                  We Also Offer
+                  <span className="w-8 h-px bg-action"></span>
                 </motion.div>
-              ))
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl md:text-5xl font-bold text-white font-heading leading-tight"
+                >
+                  Starlink And CCTV System Installations
+                </motion.h2>
+              </div>
             )}
-          </motion.div>
+
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              {displayedProducts
+                .filter(
+                  (p) => p.category === "starlink" || p.category === "cctv"
+                )
+                .map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    variants={itemVariants}
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "50px" }}
+                    className="h-full"
+                  >
+                    <ProductCard
+                      product={product}
+                      priority={false} // Secondary items, never priority
+                    />
+                  </motion.div>
+                ))}
+            </motion.div>
+          </>
         )}
       </div>
     </div>
