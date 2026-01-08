@@ -10,6 +10,7 @@ import { Hero } from "./components/Hero";
 import { Services } from "./pages/Services";
 import { ServicesSection } from "./components/ServicesSection";
 import { PortfolioSection } from "./components/PortfolioSection";
+import { TestimonialsSection } from "./components/TestimonialsSection";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { Footer } from "./components/Footer";
 import { Seed } from "./pages/Seed";
@@ -56,6 +57,7 @@ function App() {
                     <Hero />
                     <ServicesSection />
                     <PortfolioSection />
+                    <TestimonialsSection />
                   </>
                 }
               />

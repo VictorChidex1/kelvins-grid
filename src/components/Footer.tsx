@@ -79,7 +79,7 @@ export function Footer() {
                   to="/login"
                   className="text-slate-400 hover:text-action transition-colors"
                 >
-                  Admin Login
+                  Login
                 </Link>
               </li>
             </ul>
@@ -174,7 +174,7 @@ export function Footer() {
               Terms of Service
             </span>
             <span className="hover:text-action cursor-pointer transition-colors">
-              Sitemap
+              Cookies Policy
             </span>
           </div>
         </div>
