@@ -35,7 +35,7 @@ export function ScrollToTop() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 z-[100] p-3 rounded-full 
+          className="fixed bottom-24 right-4 md:right-8 z-[90] p-3 rounded-full 
                      bg-action text-brand-950 border-2 border-action
                      shadow-[0_0_20px_rgba(255,184,0,0.4)] 
                      hover:bg-brand-950 hover:text-action transition-colors duration-300"

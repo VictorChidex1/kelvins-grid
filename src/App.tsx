@@ -13,6 +13,7 @@ import { ProcessSection } from "./components/ProcessSection";
 import { PortfolioSection } from "./components/PortfolioSection";
 import { TestimonialsSection } from "./components/TestimonialsSection";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { WhatsAppWidget } from "./components/ui/WhatsAppWidget";
 import { Footer } from "./components/Footer";
 import { Seed } from "./pages/Seed";
 import { Login } from "./pages/Login";
@@ -44,6 +45,7 @@ function App() {
                 <>
                   <Navbar />
                   <ScrollToTop />
+                  <WhatsAppWidget />
                   <main className="relative z-10 w-full">
                     <Outlet />
                   </main>
