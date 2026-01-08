@@ -15,9 +15,9 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Services", href: "/services" },
-    { name: "Portfolio", href: "#portfolio" },
-    { name: "About", href: "#about" },
-    { name: "Contact", href: "#contact" },
+    { name: "Portfolio", href: "/#portfolio" },
+    { name: "About", href: "/#about" },
+    { name: "Contact", href: "/#contact" },
   ];
 
   return (
@@ -197,14 +197,14 @@ export function Navbar() {
             )}
 
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className="text-slate-300 hover:text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
 
             {user ? (

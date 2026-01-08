@@ -14,20 +14,14 @@ export function ClientsList() {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        // In a real app with thousands of users, we'd paginate.
-        // For now, fetching all is fine for the MVP.
         const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
         const querySnapshot = await getDocs(q);
 
         const users: UserProfile[] = [];
         querySnapshot.forEach((doc) => {
-          // Add ID to the object (assuming UserProfile doesn't have it explicitly yet, though usually it's the doc ID)
-          // We'll cast it for now.
           users.push({ uid: doc.id, ...doc.data() } as any);
         });
 
-        // Filter for customers on client side if needed, or query above
-        // For now let's show everyone who is a 'customer'
         const customers = users.filter((u) => u.role === "customer");
         setClients(customers);
       } catch (error) {

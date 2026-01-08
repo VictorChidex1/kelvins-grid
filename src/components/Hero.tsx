@@ -188,7 +188,7 @@ export function Hero() {
             className="flex flex-col sm:flex-row gap-5 pt-6"
           >
             <button className="bg-action hover:bg-yellow-400 text-brand-950 font-bold py-4 px-10 rounded-lg transition-all transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,184,0,0.4)] text-lg flex items-center justify-center gap-2 group/btn">
-              Get Priority Quote
+              Book Consultation
               <svg
                 className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform"
                 fill="none"
@@ -204,7 +204,7 @@ export function Hero() {
               </svg>
             </button>
             <button className="border border-brand-700 hover:border-action text-slate-300 hover:text-white font-medium py-4 px-10 rounded-lg transition-all backdrop-blur-sm bg-brand-950/20 text-lg hover:bg-brand-950/50">
-              View Systems
+              View Packages
             </button>
           </motion.div>
 

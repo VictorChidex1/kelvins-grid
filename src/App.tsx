@@ -9,6 +9,7 @@ import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Services } from "./pages/Services";
 import { ServicesSection } from "./components/ServicesSection";
+import { PortfolioSection } from "./components/PortfolioSection";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { Seed } from "./pages/Seed";
 import { Login } from "./pages/Login";
@@ -60,6 +61,7 @@ function App() {
                   <>
                     <Hero />
                     <ServicesSection />
+                    <PortfolioSection />
                   </>
                 }
               />
