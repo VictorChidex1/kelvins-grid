@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const steps = [
   {
@@ -88,17 +89,25 @@ const steps = [
 ];
 
 export function ProcessSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
     <section
       id="process"
       className="py-24 px-6 md:px-12 bg-brand-950 relative overflow-hidden"
     >
       {/* Background Gradients */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-800/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
+
+      {!isMobile && (
+        <>
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-action/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-brand-800/10 rounded-full blur-[120px] pointer-events-none" />
+        </>
+      )}
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +135,21 @@ export function ProcessSection() {
 
         <div className="relative">
           {/* Connector Line (Desktop Only) */}
-          <div className="hidden md:block absolute top-[2.5rem] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-transparent via-brand-700 to-transparent z-0" />
+          {!isMobile && (
+            <div className="hidden md:block absolute top-[2.5rem] left-[10%] right-[10%] h-[2px] bg-brand-800 z-0 overflow-hidden">
+              {/* Energy Pulse Animation */}
+              <motion.div
+                className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-action to-transparent opacity-75"
+                animate={{ x: ["-100%", "200%"] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  repeatDelay: 1,
+                }}
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {steps.map((step, index) => (
@@ -138,23 +161,55 @@ export function ProcessSection() {
                 transition={{ delay: index * 0.15 }}
                 className="relative z-10 flex flex-col items-center text-center group"
               >
-                {/* Number Circle */}
-                <div className="w-20 h-20 rounded-full bg-brand-900 border-4 border-brand-950 flex items-center justify-center mb-6 relative group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-black/20">
-                  <div className="absolute inset-0 bg-brand-800/50 rounded-full animate-pulse opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Holographic Number HUD */}
+                <div className="w-20 h-20 flex items-center justify-center mb-8 relative">
+                  {/* Rotating Outer Ring */}
+                  {!isMobile ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 10,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
+                      className="absolute inset-0 rounded-full border border-dashed border-brand-700 opacity-50"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 rounded-full border border-dashed border-brand-700 opacity-50" />
+                  )}
+
+                  {/* Inner Solid Ring */}
+                  <div className="absolute inset-1 rounded-full border border-brand-800 bg-brand-950 shadow-[0_0_15px_rgba(234,179,8,0.1)] group-hover:shadow-[0_0_20px_rgba(234,179,8,0.3)] transition-shadow duration-500" />
+
+                  {/* Number */}
                   <span className="text-action font-mono font-bold text-xl relative z-10">
                     {step.number}
                   </span>
+
+                  {/* Bottom Indicator Dot */}
+                  <div className="absolute -bottom-2 w-1.5 h-1.5 bg-action rounded-full group-hover:animate-ping" />
                 </div>
 
-                {/* Content */}
-                <div className="bg-brand-900/30 border border-brand-800 p-6 rounded-xl backdrop-blur-sm w-full h-full hover:border-action/30 transition-colors">
+                {/* Glassmorphism Card */}
+                <div
+                  className={`relative w-full h-full p-6 rounded-xl border border-brand-800 transition-all duration-300 ${
+                    isMobile
+                      ? "bg-brand-900"
+                      : "bg-brand-900/40 backdrop-blur-md group-hover:bg-brand-900/60 group-hover:border-action/30 group-hover:shadow-2xl group-hover:shadow-action/5"
+                  }`}
+                >
+                  {/* Ghost Border Gradient (On Hover) */}
+                  {!isMobile && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-action/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  )}
+
                   <div className="text-action mb-4 flex justify-center opacity-80 group-hover:opacity-100 transition-opacity">
                     {step.icon}
                   </div>
-                  <h3 className="text-white font-bold text-lg mb-3">
+                  <h3 className="text-white font-bold text-lg mb-3 relative z-10">
                     {step.title}
                   </h3>
-                  <p className="text-slate-400 text-sm leading-relaxed">
+                  <p className="text-slate-400 text-sm leading-relaxed relative z-10">
                     {step.description}
                   </p>
                 </div>
