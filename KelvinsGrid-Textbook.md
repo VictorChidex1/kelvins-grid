@@ -2185,3 +2185,137 @@ In JavaScript, `&&` checks if the left side is true.
 - **Scenario B (Unverified User):** `false && <Icon />`. Result: **Stop. Render Nothing.**
 
 This allows us to control the UI based on data. It is the fundamental building block of "Dynamic" web apps.
+
+## 💎 Module 27: Advanced CSS & The Glassmorphism Effect
+
+You asked how we transformed a boring list of reviews into a "Premium 3D Experience".
+We used three advanced CSS techniques involving **Light**, **Layers**, and **Blur**.
+
+### 27.1 Atmospheric Lighting (The "Glow")
+
+**The Concept:**
+In real life, light bounces around. In web design, flat colors look cheap.
+We added a "Cinematic Spotlight" behind the grid.
+
+**The Code:**
+
+```tsx
+<div className="absolute ... w-[800px] h-[800px] bg-action/5 rounded-full blur-[120px]" />
+```
+
+**The Logic:**
+
+1.  **`bg-action/5`**: We take our Gold color and turn the opacity down to 5%. It's barely there.
+2.  **`blur-[120px]`**: We apply a massive blur. This turns the circle into a soft, ambient "mist" that lights up the background without distracting the user.
+
+### 27.2 Glassmorphism (`backdrop-blur`)
+
+**The Concept:**
+Glassmorphism is the effect of looking through frosted glass. It creates depth.
+Instead of a solid card, we made the card translucent.
+
+**The Code:**
+
+```tsx
+<div className="bg-brand-900/40 backdrop-blur-md border border-brand-800 ...">
+```
+
+**The Breakdown:**
+
+- **`bg-brand-900/40`**: The background is 40% opaque. You can slightly see the "Atmospheric Glow" behind it.
+- **`backdrop-blur-md`**: This is the magic. It tells the browser: _"Take whatever is BEHIND this card, and blur it."_
+  This mimics real frosted glass, making the text on top pop out.
+
+### 27.3 The "Ghost Border" Trick
+
+**The Problem:**
+CSS borders `border-color` can't easily be gradients. You can't say `border: gradient`.
+
+**The Solution:**
+We cheated. We placed a slightly larger box _behind_ our main card and gave _that_ box the gradient.
+
+**The Code:**
+
+```tsx
+{/* The Ghost Border (Behind) */}
+<div className="absolute -inset-0.5 bg-gradient-to-br from-action/50 to-brand-900 opacity-0 group-hover:opacity-100 ..." />
+
+{/* The Main Card (Front) */}
+<div className="relative ...">
+```
+
+**The Logic:**
+
+1.  **`-inset-0.5`**: This makes the ghost box 2 pixels wider than the main card on all sides.
+2.  **`opacity-0 group-hover:opacity-100`**: It is invisible by default. When you hover over the parent (`group`), it slowly fades in.
+3.  **Result:** It _looks_ like the border is glowing Gold, but it's actually a glowing box underneath!
+
+This layering technique is how Apple and Stripe make their websites look so expensive.
+
+---
+
+## 💎 Module 27: Advanced CSS & The Glassmorphism Effect
+
+You asked how we transformed a boring list of reviews into a "Premium 3D Experience".
+We used three advanced CSS techniques involving **Light**, **Layers**, and **Blur**.
+
+### 27.1 Atmospheric Lighting (The "Glow")
+
+**The Concept:**
+In real life, light bounces around. In web design, flat colors look cheap.
+We added a "Cinematic Spotlight" behind the grid.
+
+**The Code:**
+
+```tsx
+<div className="absolute ... w-[800px] h-[800px] bg-action/5 rounded-full blur-[120px]" />
+```
+
+**The Logic:**
+
+1.  **`bg-action/5`**: We take our Gold color and turn the opacity down to 5%. It's barely there.
+2.  **`blur-[120px]`**: We apply a massive blur. This turns the circle into a soft, ambient "mist" that lights up the background without distracting the user.
+
+### 27.2 Glassmorphism (`backdrop-blur`)
+
+**The Concept:**
+Glassmorphism is the effect of looking through frosted glass. It creates depth.
+Instead of a solid card, we made the card translucent.
+
+**The Code:**
+
+```tsx
+<div className="bg-brand-900/40 backdrop-blur-md border border-brand-800 ...">
+```
+
+**The Breakdown:**
+
+- **`bg-brand-900/40`**: The background is 40% opaque. You can slightly see the "Atmospheric Glow" behind it.
+- **`backdrop-blur-md`**: This is the magic. It tells the browser: _"Take whatever is BEHIND this card, and blur it."_
+  This mimics real frosted glass, making the text on top pop out.
+
+### 27.3 The "Ghost Border" Trick
+
+**The Problem:**
+CSS borders `border-color` can't easily be gradients. You can't say `border: gradient`.
+
+**The Solution:**
+We cheated. We placed a slightly larger box _behind_ our main card and gave _that_ box the gradient.
+
+**The Code:**
+
+```tsx
+{/* The Ghost Border (Behind) */}
+<div className="absolute -inset-0.5 bg-gradient-to-br from-action/50 to-brand-900 opacity-0 group-hover:opacity-100 ..." />
+
+{/* The Main Card (Front) */}
+<div className="relative ...">
+```
+
+**The Logic:**
+
+1.  **`-inset-0.5`**: This makes the ghost box 2 pixels wider than the main card on all sides.
+2.  **`opacity-0 group-hover:opacity-100`**: It is invisible by default. When you hover over the parent (`group`), it slowly fades in.
+3.  **Result:** It _looks_ like the border is glowing Gold, but it's actually a glowing box underneath!
+
+This layering technique is how Apple and Stripe make their websites look so expensive.

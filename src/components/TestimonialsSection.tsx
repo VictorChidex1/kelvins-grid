@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const testimonials = [
   {
@@ -6,7 +7,7 @@ const testimonials = [
     name: "Chief Emmanuel Olafisoye",
     location: "Lekki Phase 1, Lagos",
     role: "Homeowner",
-    image: "/images/emmanuel-olafisoye.webp", // Placeholder or initial fallback
+    image: "/images/emmanuel-olafisoye.webp",
     content:
       "I was skeptical about spending ₦8M on a solar setup, but Kelvin's Grid delivered. My 10KVA system handles all my ACs without flinching. The professionalism is unmatched in this industry.",
     verified: true,
@@ -34,11 +35,16 @@ const testimonials = [
 ];
 
 export function TestimonialsSection() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
     <section className="py-24 px-6 md:px-12 bg-brand-950 relative overflow-hidden">
-      {/* Background Decor */}
+      {/* Background Decor - Disabled on Mobile for Performance */}
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-action/5 rounded-full blur-[120px] pointer-events-none" />
+
+      {!isMobile && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-action/5 rounded-full blur-[120px] pointer-events-none" />
+      )}
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
@@ -74,13 +80,27 @@ export function TestimonialsSection() {
               transition={{ delay: index * 0.1 }}
               className="relative group"
             >
-              {/* Gold Gradient Border Glow */}
-              <div className="absolute -inset-0.5 bg-gradient-to-br from-action/50 to-brand-900 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+              {/* Gold Gradient Border Glow - Disabled Hover on Mobile */}
+              <div
+                className={`absolute -inset-0.5 bg-gradient-to-br from-action/50 to-brand-900 rounded-2xl opacity-0 transition-opacity duration-500 blur-sm ${
+                  !isMobile ? "group-hover:opacity-100" : ""
+                }`}
+              />
 
-              {/* Card Content */}
-              <div className="relative h-full bg-brand-900/40 backdrop-blur-md border border-brand-800 p-8 rounded-2xl transition-all duration-300 group-hover:bg-brand-900/60 group-hover:border-action/20 group-hover:shadow-2xl group-hover:shadow-action/5">
+              {/* Card Content - Solid Background on Mobile, Glass on Desktop */}
+              <div
+                className={`relative h-full p-8 rounded-2xl transition-all duration-300 border border-brand-800 ${
+                  isMobile
+                    ? "bg-brand-900"
+                    : "bg-brand-900/40 backdrop-blur-md group-hover:bg-brand-900/60 group-hover:border-action/20 group-hover:shadow-2xl group-hover:shadow-action/5"
+                }`}
+              >
                 {/* Quote Icon */}
-                <div className="absolute top-6 right-8 text-brand-800/50 group-hover:text-action/20 transition-colors duration-500">
+                <div
+                  className={`absolute top-6 right-8 text-brand-800/50 transition-colors duration-500 ${
+                    !isMobile ? "group-hover:text-action/20" : ""
+                  }`}
+                >
                   <svg
                     width="64"
                     height="64"
@@ -108,7 +128,11 @@ export function TestimonialsSection() {
                   "{testimonial.content}"
                 </p>
 
-                <div className="flex items-center gap-4 pt-6 border-t border-brand-800/50 group-hover:border-action/20 transition-colors">
+                <div
+                  className={`flex items-center gap-4 pt-6 border-t border-brand-800/50 transition-colors ${
+                    !isMobile ? "group-hover:border-action/20" : ""
+                  }`}
+                >
                   <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-br from-action to-brand-900 overflow-hidden relative flex-shrink-0">
                     <img
                       src={testimonial.image}
