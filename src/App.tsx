@@ -9,6 +9,7 @@ import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Services } from "./pages/Services";
 import { ServicesSection } from "./components/ServicesSection";
+import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { Seed } from "./pages/Seed";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -46,6 +47,7 @@ function App() {
               element={
                 <>
                   <Navbar />
+                  <ScrollToTop />
                   <main className="relative z-10 w-full">
                     <Outlet />
                   </main>
