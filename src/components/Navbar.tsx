@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 import { useAuth } from "../context/AuthContext";
 
 export function Navbar() {
@@ -15,10 +16,25 @@ export function Navbar() {
 
   const navLinks = [
     { name: "Services", href: "/services" },
-    { name: "Portfolio", href: "/#portfolio" },
-    { name: "About", href: "/#about" },
-    { name: "Contact", href: "/#contact" },
+    { name: "Portfolio", href: "/#portfolio", isHash: true },
+    { name: "About", href: "/about", isHash: true },
+    { name: "Contact", href: "/contact", isHash: true },
   ];
+
+  const LinkComponent = ({ item, className, onClick }: any) => {
+    if (item.isHash) {
+      return (
+        <HashLink smooth to={item.href} className={className} onClick={onClick}>
+          {item.name}
+        </HashLink>
+      );
+    }
+    return (
+      <Link to={item.href} className={className} onClick={onClick}>
+        {item.name}
+      </Link>
+    );
+  };
 
   return (
     <nav className="fixed top-0 w-full z-50 px-6 py-4">
@@ -38,17 +54,14 @@ export function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
+              <LinkComponent
                 key={link.name}
-                to={link.href}
+                item={link}
                 className="text-sm font-medium text-slate-400 hover:text-action transition-colors"
-              >
-                {link.name}
-              </Link>
+              />
             ))}
           </div>
 
-          {/* CTA Button */}
           {/* CTA Button / Profile Dropdown */}
           <div className="hidden md:flex items-center gap-4 relative">
             {user ? (
@@ -197,14 +210,12 @@ export function Navbar() {
             )}
 
             {navLinks.map((link) => (
-              <Link
+              <LinkComponent
                 key={link.name}
-                to={link.href}
+                item={link}
                 className="text-slate-300 hover:text-action font-medium py-2 px-2 hover:bg-brand-800/50 rounded-lg transition-colors"
                 onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </Link>
+              />
             ))}
 
             {user ? (
