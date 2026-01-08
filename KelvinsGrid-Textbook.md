@@ -2747,3 +2747,81 @@ We wrapped all these fancy animations in logic:
 
 - **Why?** Calculating rotation for 4 rings + a moving beam at 60fps drains an iPhone battery in minutes.
 - **The Fix:** On mobile, we render a static `div` instead. It looks the same, but it doesn't move. Zero battery cost.
+
+---
+
+## 💬 Module 31: The Floating Action Button (FAB) Architecture
+
+You asked for a breakdown of the **WhatsApp Widget** and the **Safari Fix**.
+This is a lesson in **Mobile-First Fixed Positioning**.
+
+### 31.1 The Stacking Strategy (The "Z-Index War")
+
+**The Problem:**
+We had two buttons floating on the screen:
+
+1.  **Scroll To Top** (Arrow)
+2.  **WhatsApp Chat** (Green Bubble)
+
+If both are at `bottom-8`, they sit on top of each other. Ugly.
+
+**The Solution:**
+We created a **Vertical Stack**.
+
+- **Whatsapp:** `bottom-4` (The Anchor).
+- **ScrollToTop:** `bottom-24` (The Satellite).
+
+**The Code:**
+
+```tsx
+// WhatsApp (Anchor)
+className = "fixed bottom-4 right-4 ...";
+
+// ScrollToTop (Satellite)
+className = "fixed bottom-24 right-4 ...";
+```
+
+- **Logic:** We gave them different "altitudes" on the screen so they never collide.
+
+### 31.2 The Safari Mobile Crisis (`safe-area-inset-bottom`)
+
+**The Issue:**
+On an iPhone X or newer, there is a **Home Bar** (the black line at the bottom).
+On Safari, there is also a **Address Bar** that slides up when you scroll.
+Your WhatsApp button was getting buried under these UI elements.
+
+**The Fix:**
+We used a special CSS Environment Variable found only on Apple devices.
+
+**The Code:**
+
+```css
+bottom-[calc(1rem + env(safe-area-inset-bottom))]
+```
+
+**The Breakdown:**
+
+1.  **`env(safe-area-inset-bottom)`**: This asks the iPhone: _"How tall is your Home Bar/Toolbar?"_ (Usually 34px).
+2.  **`1rem`**: This is our standard 16px spacing.
+3.  **`calc(...)`**: We add them together.
+    - **Result:** `16px + 34px = 50px`.
+    - The button automatically "jumps" up by 50px to sit perfectly _above_ the Home Bar.
+
+### 31.3 The "Smart" Redirect (URI Encoding)
+
+**The Goal:**
+When the user clicks "Send", we don't just open WhatsApp. We want to **pre-fill** the message they typed.
+
+**The Code:**
+
+```tsx
+const encodedMessage = encodeURIComponent(message);
+window.open(`https://wa.me/${number}?text=${encodedMessage}`, "_blank");
+```
+
+**The Logic:**
+
+- **`encodeURIComponent`**: URLs cannot contain spaces.
+  - User types: `I need help`
+  - Encoded: `I%20need%20help`
+- If we didn't do this, the link would break. This ensures the message arrives perfectly in Kelvin's inbox.

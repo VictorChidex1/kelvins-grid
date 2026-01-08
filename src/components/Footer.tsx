@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
+import { useAuth } from "../context/AuthContext";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { user, userProfile, logout } = useAuth();
 
   const footerLinks = [
     { name: "Services", href: "/services", isHash: false },
@@ -75,12 +77,46 @@ export function Footer() {
                 </li>
               ))}
               <li>
-                <Link
-                  to="/login"
-                  className="text-slate-400 hover:text-action transition-colors"
-                >
-                  Login
-                </Link>
+                {user ? (
+                  <>
+                    {userProfile?.role === "admin" ? (
+                      <li>
+                        <Link
+                          to="/admin"
+                          className="text-slate-400 hover:text-action transition-colors"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      </li>
+                    ) : (
+                      <li>
+                        <Link
+                          to="/dashboard"
+                          className="text-slate-400 hover:text-action transition-colors"
+                        >
+                          My Account
+                        </Link>
+                      </li>
+                    )}
+                    <li>
+                      <button
+                        onClick={() => logout()}
+                        className="text-slate-400 hover:text-red-500 transition-colors text-left"
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </>
+                ) : (
+                  <li>
+                    <Link
+                      to="/login"
+                      className="text-slate-400 hover:text-action transition-colors"
+                    >
+                      Login
+                    </Link>
+                  </li>
+                )}
               </li>
             </ul>
           </div>

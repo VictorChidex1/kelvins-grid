@@ -46,7 +46,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
             transition: { type: "spring", stiffness: 300, damping: 20 },
           },
         }}
-        className="relative group bg-brand-900 border border-brand-800 rounded-xl overflow-hidden shadow-2xl hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] hover:border-brand-700 transition-colors duration-300 flex flex-col md:flex-row h-full"
+        className="relative group bg-brand-900 border border-brand-800 rounded-xl overflow-hidden shadow-2xl 
+        hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] hover:border-brand-700 transition-colors duration-300 flex flex-col md:flex-row h-full"
       >
         {/* Badge */}
         {product.badge && (
@@ -104,7 +105,8 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
                 transition: { type: "spring", stiffness: 400, damping: 10 },
               },
             }}
-            className="absolute bottom-4 right-4 w-10 h-10 bg-action rounded-full flex items-center justify-center text-brand-950 shadow-xl z-20"
+            className="absolute bottom-4 right-4 w-10 h-10 bg-action rounded-full flex items-center justify-center
+             text-brand-950 shadow-xl z-20"
           >
             <ArrowRight size={20} />
           </motion.div>

@@ -23,7 +23,7 @@ service firebase.storage {
       // 2. WRITE: Only the owner can upload, with strict validation
       allow write: if isOwner(userId)                   // Must match Auth ID
                    && request.resource.size < 2 * 1024 * 1024 // Max Size: 2MB (2 * 1024 * 1024 bytes)
-                   && request.resource.contentType.matches('image/.*'); // Must be an image (png, jpg, etc.)
+                   && request.resource.contentType.matches('image/.*'); // Must be an image (png, jpg, etc.) 
     }
     
     // Default: Deny
