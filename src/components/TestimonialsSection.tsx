@@ -26,7 +26,7 @@ const testimonials = [
     id: 3,
     name: "Engr. Victor Chidera",
     location: "Asaba, Delta logo",
-    role: "Civil Engineer",
+    role: "Software Engineer",
     image: "/images/victor-chidera.webp",
     content:
       "As an engineer myself, I look for cable management and safety systems. These guys don't cut corners. The earthing and protection systems are top-tier. Highly recommended.",

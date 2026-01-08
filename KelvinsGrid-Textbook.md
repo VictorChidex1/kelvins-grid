@@ -2319,3 +2319,141 @@ We cheated. We placed a slightly larger box _behind_ our main card and gave _tha
 3.  **Result:** It _looks_ like the border is glowing Gold, but it's actually a glowing box underneath!
 
 This layering technique is how Apple and Stripe make their websites look so expensive.
+
+## ⚡ Module 28: Performance Engineering (The Mobile GPU Crisis)
+
+You asked why the app was "lagging for 3 seconds" on Safari, and how we fixed it.
+This is a classic case of **Graphic Overload**.
+
+### 28.1 The Problem: "Expensive" Pixels
+
+In web design, not all pixels are created equal.
+
+1.  **Solid Color (`bg-brand-900`):** Easy. The phone just paints a square.
+2.  **Glassmorphism (`backdrop-blur-md`):** Extremely Hard. The phone has to:
+    - Calculated every pixel _behind_ the card.
+    - Apply a Gaussian Blur mathematical formula to it.
+    - Re-draw the card on top.
+    - **Do this 60 times a second** as you scroll.
+
+On a MacBook Pro (M1/M2/M3), this is easy.
+On an iPhone (with limited battery/heat limits), this causes the phone to "choke" or lag.
+
+### 28.2 The Solution: `useMediaQuery`
+
+We used a **React Hook** to detect the device type.
+
+**The Code:**
+
+```tsx
+const isMobile = useMediaQuery("(max-width: 768px)");
+```
+
+- **Logic:** This asks the browser window: "Are you smaller than an iPad?"
+- If YES, `isMobile` becomes `true`.
+
+### 28.3 Conditional Styling (The Ternary Operator)
+
+We used the **Ternary Operator (`? :`)** to switch specific styles off.
+
+**The Code:**
+
+```tsx
+className={`relative ... ${
+  isMobile
+    ? "bg-brand-900" // Mobile: Solid Paint (Cheap)
+    : "bg-brand-900/40 backdrop-blur-md" // Desktop: Glass Effect (Expensive)
+}`}
+```
+
+**The Breakdown:**
+
+- **If Mobile:** We force a solid background. No calculations needed. The scroll becomes instant.
+- **If Desktop:** We enable the premium glass effect because the computer is plugged in and powerful.
+
+### 28.4 Disabling the Atmosphere
+
+We also hid the massive glowing orb on mobile.
+
+**The Code:**
+
+```tsx
+{
+  !isMobile && <div className="blur-[120px] ..." />;
+}
+```
+
+- **Logic:** `!isMobile` means "If NOT mobile".
+- So, the huge glowing blur doesn't even exist in the DOM on your phone. This saves huge amounts of RAM.
+
+**Summary:** We traded "Fancy Translucency" for "Buttery Smooth Scroll" on phones. This is a standard engineering trade-off.
+
+---
+
+## ⚡ Module 28: Performance Engineering (The Mobile GPU Crisis)
+
+You asked why the app was "lagging for 3 seconds" on Safari, and how we fixed it.
+This is a classic case of **Graphic Overload**.
+
+### 28.1 The Problem: "Expensive" Pixels
+
+In web design, not all pixels are created equal.
+
+1.  **Solid Color (`bg-brand-900`):** Easy. The phone just paints a square.
+2.  **Glassmorphism (`backdrop-blur-md`):** Extremely Hard. The phone has to:
+    - Calculated every pixel _behind_ the card.
+    - Apply a Gaussian Blur mathematical formula to it.
+    - Re-draw the card on top.
+    - **Do this 60 times a second** as you scroll.
+
+On a MacBook Pro (M1/M2/M3), this is easy.
+On an iPhone (with limited battery/heat limits), this causes the phone to "choke" or lag.
+
+### 28.2 The Solution: `useMediaQuery`
+
+We used a **React Hook** to detect the device type.
+
+**The Code:**
+
+```tsx
+const isMobile = useMediaQuery("(max-width: 768px)");
+```
+
+- **Logic:** This asks the browser window: "Are you smaller than an iPad?"
+- If YES, `isMobile` becomes `true`.
+
+### 28.3 Conditional Styling (The Ternary Operator)
+
+We used the **Ternary Operator (`? :`)** to switch specific styles off.
+
+**The Code:**
+
+```tsx
+className={`relative ... ${
+  isMobile
+    ? "bg-brand-900" // Mobile: Solid Paint (Cheap)
+    : "bg-brand-900/40 backdrop-blur-md" // Desktop: Glass Effect (Expensive)
+}`}
+```
+
+**The Breakdown:**
+
+- **If Mobile:** We force a solid background. No calculations needed. The scroll becomes instant.
+- **If Desktop:** We enable the premium glass effect because the computer is plugged in and powerful.
+
+### 28.4 Disabling the Atmosphere
+
+We also hid the massive glowing orb on mobile.
+
+**The Code:**
+
+```tsx
+{
+  !isMobile && <div className="blur-[120px] ..." />;
+}
+```
+
+- **Logic:** `!isMobile` means "If NOT mobile".
+- So, the huge glowing blur doesn't even exist in the DOM on your phone. This saves huge amounts of RAM.
+
+**Summary:** We traded "Fancy Translucency" for "Buttery Smooth Scroll" on phones. This is a standard engineering trade-off.
