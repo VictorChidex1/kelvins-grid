@@ -207,6 +207,20 @@ export function Hero() {
               View Systems
             </button>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.3 }}
+            className="pt-8 opacity-80"
+          >
+            <p className="text-white font-heading text-lg tracking-wide uppercase font-bold">
+              Kelvin's Grid RC NO: 7977365
+            </p>
+            <p className="text-slate-400 font-mono text-sm tracking-widest uppercase">
+              Engineering Service
+            </p>
+          </motion.div>
         </div>
       </div>
 

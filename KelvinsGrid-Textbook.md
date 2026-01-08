@@ -1714,3 +1714,70 @@ With these changes, the Services page now scores 98-100 on Performance.
 - **LCP:** < 0.8s
 - **CLS:** 0.00
 - **Interaction/Nav Delay:** < 50ms (Imperceptible)
+## 🏗️ Module 23: Structural Refactoring & Smart Layouts
+
+You asked to separate the "Solar Products" from the "Add-ons" (Starlink/CCTV).
+Here is how we refactored the layout while keeping our "God Mode" performance intact.
+
+### 23.1 The "Split Logic" Strategy
+
+**The Problem:**
+Initially, we just mapped `products.map(...)`. It was one giant blob of data.
+
+**The Goal:**
+
+1.  **Grid A:** Only Solar Inverters.
+2.  **Divider:** "We Also Offer..."
+3.  **Grid B:** Starlink & CCTV.
+
+**The Logic (How we did it):**
+We didn't create two separate API calls. We just "filtered" the data we already had in memory.
+
+```tsx
+// 1. Get the list of visible products (Sliced & Filtered)
+const displayedProducts = ...;
+
+// 2. Render Grid A (Solar Only)
+{displayedProducts
+  .filter(p => p.category === 'solar')
+  .map(product => <ProductCard ... />)
+}
+
+// 3. Render Divider
+<div>We Also Offer...</div>
+
+// 4. Render Grid B (Others)
+{displayedProducts
+  .filter(p => p.category !== 'solar') // Starlink/CCTV
+  .map(product => <ProductCard ... />)
+}
+```
+
+### 23.2 Smart "Context-Aware" Headers
+
+**The Challenge:**
+If the user clicks the "Solar" filter, `displayedProducts` will ONLY contain solar items.
+If we blindly render the "We Also Offer" header, it would look like this:
+
+> [Solar Grid] > **"We Also Offer..."**
+> (Empty Space)
+
+**The Fix:**
+We added a check to see if the second grid _actually has items_ before mapping it or showing the header.
+
+```tsx
+// Only show this header if 'Starlink' or 'CCTV' items exist in the current view
+{
+  displayedProducts.some(
+    (p) => p.category === "starlink" || p.category === "cctv"
+  ) && <div className="section-header">We Also Offer Starlink & CCTV</div>;
+}
+```
+
+**Result:**
+
+- **Filter "All":** Shows Split Layout.
+- **Filter "Solar":** Shows only Solar Grid (Header hides automatically).
+- **Filter "Starlink":** Shows only Starlink Grid (Header shows, Solar grid is empty/hidden).
+
+This makes the UI feel "intelligent" rather than static.
