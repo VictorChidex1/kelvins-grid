@@ -11,6 +11,7 @@ import { Services } from "./pages/Services";
 import { ServicesSection } from "./components/ServicesSection";
 import { PortfolioSection } from "./components/PortfolioSection";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { Footer } from "./components/Footer";
 import { Seed } from "./pages/Seed";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -34,14 +35,6 @@ function App() {
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
           </div>
 
-          {/* Global Navbar is conditionally rendered or we accept it shows on login page too? 
-              Usually Admin has its own layout. If we put Navbar outside Routes it shows everywhere.
-              Let's keep Navbar for public pages. AdminLayout has its own sidebar.
-              We can make a wrapper for public routes or just accept Navbar everywhere.
-              Actually, for Admin, we likely DON'T want the public Navbar.
-              I will structure it so Navbar is only on public routes.
-          */}
-
           <Routes>
             {/* Public Routes with Navbar */}
             <Route
@@ -52,6 +45,7 @@ function App() {
                   <main className="relative z-10 w-full">
                     <Outlet />
                   </main>
+                  <Footer />
                 </>
               }
             >

@@ -1369,6 +1369,7 @@ Result: Browser navigation is no longer blocked by image decoding. The page fram
 🏁 Try it now
 The navigation from the "View Full Catalog" link to the Services page should now feel instant on your iPhone. ⚡
 ```
+
 ## 🦅 Module 20: God Mode Speed (The Art of Cheating)
 
 You asked for a "Deep Dive" into how we achieved instant navigation on Safari.
@@ -1463,6 +1464,7 @@ We modified `ProductCard` to accept a `priority` prop.
 
 **Conclusion:**
 Safari is fast, but it gets overwhelmed easily. By manually managing the render queue ("Cheating"), we ensure it never bites off more than it can chew.
+
 ## 🚦 Module 21: The Main Thread (The Single Lane Highway)
 
 You asked for a deep dive into the "Main Thread" optimizations. Current performance engineering is all about **Physics** and **Traffic Control**.
@@ -1542,88 +1544,87 @@ setTimeout(() => setVisibleCount(products.length), 500);
 3.  500ms: Load the rest of the data (User is effectively idle).
 
 We effectively "parked" the heavy truck only after the race car had left the track.
-## 🛠️ Module 22: The "Missing Products" Fix & Dynamic Filters
 
-We encountered a critical bug after our optimizations: **Products 5-20 were missing.**
-This module explains why that happened and how we fixed it while adding Dynamic Filtering.
+## 🚦 Module 21: The Main Thread (The Single Lane Highway)
 
-### Lesson 22.1: The Race Condition (Why rendering failed)
+You asked for a deep dive into the "Main Thread" optimizations. Current performance engineering is all about **Physics** and **Traffic Control**.
 
-**The Bug:**
-We used a numeric counter: `visibleCount`.
-We said: _"Start at 4. Wait 500ms. Set to 20."_
-But `products.length` was changing from `0` (Loading) to `20` (Fetched) _during_ that 500ms window.
-The timer fired too early (or didn't update), getting stuck at `4`.
+### Lesson 21.1: The "Sync Decode" Traffic Jam
 
-**The Fix: Boolean Hydration (`isHydrated`)**
-We switched from a Number to a Boolean.
-
-```tsx
-// Old (Fragile)
-const [visibleCount, setVisibleCount] = useState(4);
-
-// New (Robust)
-const [isHydrated, setIsHydrated] = useState(false);
-```
-
-**The Logic:**
-
-1.  **Phase 1 (Mount):** `isHydrated = false`. We explicitly slice: `products.slice(0, 4)`.
-2.  **Phase 2 (Timer):** Wait 500ms. Set `isHydrated = true`.
-3.  **Phase 3 (Render):** If `true`, show `products` (EVERYTHING).
-
-This guarantees that once the switch flips, **100% of the data** is shown. No math errors.
-
-### Lesson 22.2: The "Hidden Children" Animation Bug
-
-**The Bug:**
-Even after fixing the logic, the products were there in the DOM but **Invisible**.
-Why? The parent container `motion.div` had already finished its "Entry Animation".
-The new children arrived late to the party and waited for a signal ("Show!") that had already happened.
+**The Concept:**
+Images are just 1s and 0s. The CPU has to "Code Break" (Decode) them into pixels.
+When you set `decoding="sync"` (or leave it default), the browser says:
+_"Stop everything! I need to solve this image puzzle before I show the next frame."_
+On a desktop CPU, this takes 1ms. On an iPhone (in Low Power Mode), it might take 50ms.
+If you have 10 images, that’s 500ms of freezing.
 
 **The Fix:**
-We accepted `whileInView="show"` to **every individual child**.
+We switched to **Async Decoding**:
 
 ```tsx
-<motion.div
-  initial="hidden"
-  whileInView="show" // <--- Critical Fix
-  viewport={{ once: true }}
->
+<img decoding="async" />
 ```
 
-**Result:** Each card now has its own "Brain." It checks if it's on screen and animates itself in, regardless of what the parent is doing.
+**Translation:** _"Browser, please decode this image on a background thread. Show the page layout IMMEDIATELY. Paint the pixels whenever you are ready."_
+**Result:** The navigation happens instantly. The images "fade in" 50ms later, but the user feels zero lag.
 
-### Lesson 22.3: Integrating Dynamic Filters
+### Lesson 21.2: Layout Thrashing (The `layout` Prop)
 
-You asked for the page to be "Dynamic." We added Client-Side Filtering.
+**The Concept:**
+Framer Motion's `layout` prop is magical. It automatically animates an element from its old position to its new position.
+**The Cost:**
+To do this, it has to measure the geometry (Width, Height, X, Y) of every element, every single frame (60 times a second). This is called "Reading the DOM."
+Doing this during a page load is suicide. The browser is already busy building the page; asking it to measure every div simultaneously causes **Layout Thrashing**.
 
-**The Challenge:**
-How do you filter massive lists instantly without lagging?
+**The Fix:**
+We removed the `layout` prop.
+**Result:** We use standard CSS transitions for the entry. It looks 99% as good but costs 0% CPU.
 
-**The Solution:**
-We filter _before_ we slice.
+### Lesson 21.3: VRAM Bandwidth (The Background Blobs)
+
+**The Concept:**
+Your background "blurred blobs" look like simple colors, but to a GPU, they are **Math**.
+To blur a 500x500 pixel circle by 120px, the GPU has to sample thousands of neighboring pixels for every single pixel on the screen.
+On a 4K Desktop Monitor, you have a plugged-in GPU. Easy.
+On an iPhone, you have a tiny shared memory pool (VRAM).
+Those blobs were consuming **50MB+ of VRAM**. When you tried to scroll, the iPhone choked because it ran out of "Video Memory Bandwidth."
+
+**The Fix:**
+We utilized the `!isMobile` guard.
 
 ```tsx
-// 1. Filter ALL products first (Client-Side = Instant)
-const filteredProducts =
-  activeCategory === "all"
-    ? products
-    : products.filter((p) => p.category === activeCategory);
-
-// 2. Then decide how many to show (Performance)
-const displayedProducts = isHydrated
-  ? filteredProducts // Show all matches
-  : filteredProducts.slice(0, 4); // Only show 4 if just mounted
+{
+  !isMobile && <BackgroundBlobs />;
+}
 ```
 
-**Why this is "God Mode":**
-If you click "Solar" immediately after loading:
+**Result:** On mobile, we purely show the dark grid. It looks clean, professional, and scrolls at 120Hz because the GPU is bored.
 
-1.  The app instantly filters to "Solar".
-2.  It _still_ respects the performance limit (shows only 4 solar kits first).
-3.  500ms later, it shows the rest.
-    This maintains 60fps scrolling even during complex filtering operations.
+### Lesson 21.4: Hydration Deferral (The 500ms Rule)
+
+**The Concept:**
+Remember "Render Slicing" (Module 20)?
+We were waiting `100ms` before loading the rest of the products.
+**The Mistake:**
+The initial page transition (sliding in, fading up) takes about `300-400ms`.
+By triggering the "Heavy Load" at `100ms`, we were starting a heavy calculation **while the animation was still running**.
+This caused a stutter in the middle of the fade-in.
+
+**The Fix:**
+We bumped the timer to `500ms`.
+
+```tsx
+setTimeout(() => setVisibleCount(products.length), 500);
+```
+
+**Result:**
+
+1.  0ms: Start Animation (Smooth).
+2.  400ms: Animation Finishes (Still Smooth).
+3.  500ms: Load the rest of the data (User is effectively idle).
+
+We effectively "parked" the heavy truck only after the race car had left the track.
+
 ## 🛠️ Module 22: The "Missing Products" Fix & Dynamic Filters
 
 We encountered a critical bug after our optimizations: **Products 5-20 were missing.**
@@ -1714,6 +1715,7 @@ With these changes, the Services page now scores 98-100 on Performance.
 - **LCP:** < 0.8s
 - **CLS:** 0.00
 - **Interaction/Nav Delay:** < 50ms (Imperceptible)
+
 ## 🏗️ Module 23: Structural Refactoring & Smart Layouts
 
 You asked to separate the "Solar Products" from the "Add-ons" (Starlink/CCTV).
@@ -1781,3 +1783,151 @@ We added a check to see if the second grid _actually has items_ before mapping i
 - **Filter "Starlink":** Shows only Starlink Grid (Header shows, Solar grid is empty/hidden).
 
 This makes the UI feel "intelligent" rather than static.
+
+## 🧭 Module 24: Mastering React Navigation (The "Hash Link" Problem)
+
+You asked for a "Deep Dive" into why your Portfolio link was broken and how we fixed it professionally.
+This is a classic issue in **Single Page Applications (SPAs)**.
+
+### 24.1 The "Dumb Link" vs. The "Smart Link"
+
+**The Old Way (`<a>` tag):**
+`<a href="/#portfolio">Portfolio</a>`
+
+- **Behavior:** The browser sees this and thinks, "Oh, I need to fetch a new page."
+- **Result:** The screen flashes white (full reload). All your state (user login, scroll position, products loaded) is WIPED OUT.
+- **Verdict:** ❌ Unacceptable for modern web apps.
+
+**The React Way (`<Link>` component):**
+`<Link to="/#portfolio">Portfolio</Link>`
+
+- **Behavior:** React Router catches the click. It says, "Don't reload! I'll just change the URL bar to `/`."
+- **Result:** Instant transition. No flash.
+- **The Bug:** React Router changes the URL, but it often **forgets to scroll** to the ID (`#portfolio`). The user lands on the homepage but stays at the top.
+
+### 24.2 The Professional Fix: `HashLink`
+
+We installed `react-router-hash-link` to give us the best of both worlds.
+
+**The Logic:**
+It acts like a `<Link>` (no reload) but adds a script to handle the physical scrolling behavior.
+
+**The Code Explained:**
+
+```tsx
+import { HashLink } from "react-router-hash-link";
+
+// ...
+
+// The "Smart" Component
+const LinkComponent = ({ item }) => {
+  if (item.isHash) {
+    // 1. Used for Scroll Targets (Portfolio, About, Contact)
+    return (
+      <HashLink smooth to={item.href}>
+        {item.name}
+      </HashLink>
+    );
+  }
+  // 2. Used for Pages (Services)
+  return <Link to={item.href}>{item.name}</Link>;
+};
+
+// ...
+
+// The Data Structure (Absolute Paths)
+const navLinks = [
+  { name: "Services", href: "/services" }, // Regular Page
+  { name: "Portfolio", href: "/#portfolio", isHash: true }, // Anchor on Homepage
+];
+```
+
+**Why `/#portfolio` (Absolute) instead of `#portfolio` (Relative)?**
+If you are on the `/services` page and click a link to `#portfolio` (Relative), the browser tries to find `#portfolio` _inside_ the Services page. It doesn't exist.
+By using `/#portfolio` (Absolute), we tell the browser:
+
+1.  Go to the Root Homepage (`/`).
+2.  _Then_ scroll to `#portfolio`.
+
+### 24.3 Summary of Terminologies
+
+1.  **SPA (Single Page Application):** A website that never reloads. It just swaps content.
+2.  **Client-Side Routing:** When JavaScript handles navigation instead of the Server.
+3.  **Hash Fragment (`#id`):** The part of the URL that points to a specific section on the page.
+4.  **Hydration:** When React takes over the static HTML and adds interactivity (like click listeners).
+
+We have now implemented **Type-Safe, Cross-Route, Smooth-Scrolling** navigation. This is the industry standard.
+
+## 🧭 Module 24: Mastering React Navigation (The "Hash Link" Problem)
+
+You asked for a "Deep Dive" into why your Portfolio link was broken and how we fixed it professionally.
+This is a classic issue in **Single Page Applications (SPAs)**.
+
+### 24.1 The "Dumb Link" vs. The "Smart Link"
+
+**The Old Way (`<a>` tag):**
+`<a href="/#portfolio">Portfolio</a>`
+
+- **Behavior:** The browser sees this and thinks, "Oh, I need to fetch a new page."
+- **Result:** The screen flashes white (full reload). All your state (user login, scroll position, products loaded) is WIPED OUT.
+- **Verdict:** ❌ Unacceptable for modern web apps.
+
+**The React Way (`<Link>` component):**
+`<Link to="/#portfolio">Portfolio</Link>`
+
+- **Behavior:** React Router catches the click. It says, "Don't reload! I'll just change the URL bar to `/`."
+- **Result:** Instant transition. No flash.
+- **The Bug:** React Router changes the URL, but it often **forgets to scroll** to the ID (`#portfolio`). The user lands on the homepage but stays at the top.
+
+### 24.2 The Professional Fix: `HashLink`
+
+We installed `react-router-hash-link` to give us the best of both worlds.
+
+**The Logic:**
+It acts like a `<Link>` (no reload) but adds a script to handle the physical scrolling behavior.
+
+**The Code Explained:**
+
+```tsx
+import { HashLink } from "react-router-hash-link";
+
+// ...
+
+// The "Smart" Component
+const LinkComponent = ({ item }) => {
+  if (item.isHash) {
+    // 1. Used for Scroll Targets (Portfolio, About, Contact)
+    return (
+      <HashLink smooth to={item.href}>
+        {item.name}
+      </HashLink>
+    );
+  }
+  // 2. Used for Pages (Services)
+  return <Link to={item.href}>{item.name}</Link>;
+};
+
+// ...
+
+// The Data Structure (Absolute Paths)
+const navLinks = [
+  { name: "Services", href: "/services" }, // Regular Page
+  { name: "Portfolio", href: "/#portfolio", isHash: true }, // Anchor on Homepage
+];
+```
+
+**Why `/#portfolio` (Absolute) instead of `#portfolio` (Relative)?**
+If you are on the `/services` page and click a link to `#portfolio` (Relative), the browser tries to find `#portfolio` _inside_ the Services page. It doesn't exist.
+By using `/#portfolio` (Absolute), we tell the browser:
+
+1.  Go to the Root Homepage (`/`).
+2.  _Then_ scroll to `#portfolio`.
+
+### 24.3 Summary of Terminologies
+
+1.  **SPA (Single Page Application):** A website that never reloads. It just swaps content.
+2.  **Client-Side Routing:** When JavaScript handles navigation instead of the Server.
+3.  **Hash Fragment (`#id`):** The part of the URL that points to a specific section on the page.
+4.  **Hydration:** When React takes over the static HTML and adds interactivity (like click listeners).
+
+We have now implemented **Type-Safe, Cross-Route, Smooth-Scrolling** navigation. This is the industry standard.
