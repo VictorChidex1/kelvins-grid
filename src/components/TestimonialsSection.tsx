@@ -3,20 +3,20 @@ import { motion } from "framer-motion";
 const testimonials = [
   {
     id: 1,
-    name: "Chief Emeka Okonkwo",
+    name: "Chief Emmanuel Olafisoye",
     location: "Lekki Phase 1, Lagos",
     role: "Homeowner",
-    image: "/images/avatar-1.jpg", // Placeholder or initial fallback
+    image: "/images/emmanuel-olafisoye.webp", // Placeholder or initial fallback
     content:
       "I was skeptical about spending ₦8M on a solar setup, but Kelvin's Grid delivered. My 10KVA system handles all my ACs without flinching. The professionalism is unmatched in this industry.",
     verified: true,
   },
   {
     id: 2,
-    name: "Dr. Mrs. Adebayo",
+    name: "Dr. Ozioma",
     location: "GRA, Port Harcourt",
     role: "Medical Director",
-    image: "/images/avatar-2.jpg",
+    image: "/images/dr-ozioma.webp",
     content:
       "The Starlink installation was seamless. They integrated it perfectly with my existing CCTV network. Now I can monitor my clinic remotely with zero lag. fast and neat work.",
     verified: true,
@@ -104,8 +104,13 @@ export function TestimonialsSection() {
               </p>
 
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-brand-800 flex items-center justify-center text-action font-bold text-lg border border-brand-700">
-                  {testimonial.name[0]}
+                <div className="w-12 h-12 rounded-full bg-brand-800 border-2 border-brand-700 overflow-hidden relative flex-shrink-0">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <h4 className="text-white font-bold text-sm tracking-wide">
