@@ -91,16 +91,16 @@ export function ServicesSection() {
               className="flex items-center gap-2 mb-4 text-action font-mono text-xs tracking-widest uppercase"
             >
               <span className="w-8 h-px bg-action"></span>
-              Power Solutions
+              What We Offer
             </motion.div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-3xl md:text-5xl font-bold text-white font-heading"
+              className="text-3xl md:text-5xl font-bold text-white font-heading leading-tight"
             >
-              System Configurations
+              Solar Services Made Specifically For Your Needs
             </motion.h2>
           </div>
 
