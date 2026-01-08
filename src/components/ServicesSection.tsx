@@ -35,11 +35,11 @@ export function ServicesSection() {
   // Select a mix of products: Top 2 Solar + Starlink + CCTV
   const solarProducts = products
     .filter((p) => p.category === "solar")
-    .slice(0, 2);
+    .slice(0, 4);
   const otherProducts = products.filter(
     (p) => p.category === "starlink" || p.category === "cctv"
   );
-  const featuredProducts = [...solarProducts, ...otherProducts];
+  // Featured products split logic implemented below
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -142,23 +142,66 @@ export function ServicesSection() {
             ))}
           </div>
         ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {featuredProducts.map((product) => (
+          <>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-24"
+            >
+              {solarProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  variants={itemVariants}
+                  className="h-full"
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Starlink & CCTV Section Header */}
+            <div className="flex flex-col items-center justify-center text-center mb-12 max-w-2xl mx-auto">
               <motion.div
-                key={product.id}
-                variants={itemVariants}
-                className="h-full"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="flex items-center gap-2 mb-4 text-action font-mono text-xs tracking-widest uppercase"
               >
-                <ProductCard product={product} />
+                <span className="w-8 h-px bg-action"></span>
+                We Also Offer
+                <span className="w-8 h-px bg-action"></span>
               </motion.div>
-            ))}
-          </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-3xl md:text-5xl font-bold text-white font-heading leading-tight"
+              >
+                Starlink And CCTV System Installations
+              </motion.h2>
+            </div>
+
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              {otherProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  variants={itemVariants}
+                  className="h-full"
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
         )}
       </div>
     </section>
