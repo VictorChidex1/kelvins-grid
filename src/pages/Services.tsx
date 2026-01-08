@@ -23,7 +23,15 @@ export function Services() {
     isMobile ? [0, 0] : [0, -200]
   );
 
-  const [visibleCount, setVisibleCount] = useState(4); // Render Slicing: Start with 4
+  const [isHydrated, setIsHydrated] = useState(false); // Render Slicing: Start small
+  const [activeCategory, setActiveCategory] = useState("all"); // Filter State
+
+  const categories = [
+    { id: "all", label: "All Systems" },
+    { id: "solar", label: "Solar Inverter" },
+    { id: "starlink", label: "Starlink" },
+    { id: "cctv", label: "CCTV" },
+  ];
 
   useEffect(() => {
     fetchProducts();
@@ -31,13 +39,26 @@ export function Services() {
 
   // Progressive Hydration
   useEffect(() => {
+    // Wait for data to be ready
     if (!isLoading && products.length > 0) {
       const timer = setTimeout(() => {
-        setVisibleCount(products.length); // Load the rest after initial paint
+        setIsHydrated(true); // Load the rest after initial paint
       }, 500);
       return () => clearTimeout(timer);
     }
   }, [isLoading, products.length]);
+
+  // Filter Logic: Client-side filtering
+  const filteredProducts =
+    activeCategory === "all"
+      ? products
+      : products.filter((p) => p.category === activeCategory);
+
+  // Render Slicing: Only slice if NOT hydrated.
+  // CRITICAL: If filtering, we likely want to show all matches immediately if hydrated.
+  const displayedProducts = isHydrated
+    ? filteredProducts
+    : filteredProducts.slice(0, 4);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -103,6 +124,28 @@ export function Services() {
           </motion.p>
         </div>
 
+        {/* Dynamic Filter Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-wrap gap-2 mb-12 overflow-x-auto pb-4 scrollbar-hide"
+        >
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
+                activeCategory === cat.id
+                  ? "bg-action text-brand-950 border-action shadow-[0_0_15px_rgba(255,184,0,0.4)]"
+                  : "bg-brand-900/50 text-slate-400 border-brand-800 hover:border-brand-700 hover:text-white"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </motion.div>
+
         {/* Loading State */}
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -136,10 +179,13 @@ export function Services() {
                 No systems currently available. check back later.
               </div>
             ) : (
-              products.slice(0, visibleCount).map((product, index) => (
+              displayedProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
                   variants={itemVariants}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "50px" }}
                   className="h-full"
                 >
                   <ProductCard
