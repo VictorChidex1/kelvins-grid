@@ -3,14 +3,19 @@ import { useNavigate, Outlet, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export function AdminLayout() {
-  const { user, loading, logout } = useAuth();
+  const { user, userProfile, loading, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/login");
+    if (!loading) {
+      if (!user) {
+        navigate("/login");
+      } else if (userProfile?.role !== "admin") {
+        // 🛑 Security Check: If you are not an admin, GET OUT.
+        navigate("/dashboard");
+      }
     }
-  }, [user, loading, navigate]);
+  }, [user, userProfile, loading, navigate]);
 
   const handleLogout = async () => {
     await logout();
@@ -25,7 +30,8 @@ export function AdminLayout() {
     );
   }
 
-  if (!user) return null;
+  // Double Check: explicitly return null if not admin to prevent UI flashing
+  if (!user || userProfile?.role !== "admin") return null;
 
   return (
     <div className="min-h-screen bg-brand-950 flex text-slate-200">

@@ -2825,3 +2825,257 @@ window.open(`https://wa.me/${number}?text=${encodedMessage}`, "_blank");
   - User types: `I need help`
   - Encoded: `I%20need%20help`
 - If we didn't do this, the link would break. This ensures the message arrives perfectly in Kelvin's inbox.
+
+---
+
+## 🧠 Module 32: Context-Aware UI (The Footer Refactor)
+
+**The Student Asked:** _"Why does the footer still say 'Login' when I am already logged in?"_
+**The Engineer Answered:** _"Because the component was **Static**. We need to make it **Context-Aware**."_
+
+This lesson covers how we transformed a dumb link into a smart decision engine.
+
+### 32.1 The Concept: "Static" vs. "Aware"
+
+- **Static UI:** Hardcoded HTML. It looks the same for everyone (Guest, Admin, Customer).
+  - _Example:_ A graffiti tag on a wall. It always says "Victor was here."
+- **Context-Aware UI:** Dynamic React Code. It reads the "Room Atmosphere" (Global State) and changes accordingly.
+  - _Example:_ A smart billboard that shows "Good Morning" at 8 AM and "Good Night" at 8 PM.
+
+### 32.2 The Tool: `useAuth()` Hook
+
+We didn't write new logic from scratch. We plugged into our existing power plant: `AuthContext`.
+
+**The Line of Code:**
+
+```tsx
+const { user, userProfile, logout } = useAuth();
+```
+
+**The Terminology:**
+
+1.  **`useAuth()`**: This is our **Custom Hook**. Think of it as a "Power Outlet." By plugging into it, this specific component (Footer) now has electricity (User Data).
+2.  **Destructuring (`{ ... }`)**: We don't want the whole context object. We only strictly need three things:
+    - **`user`**: The raw authentication token (Is he logged in? Yes/No).
+    - **`userProfile`**: The detailed file from our database (Is he an Admin or a Customer?).
+    - **`logout`**: The function to kill the session (The "Eject" button).
+
+### 32.3 The Logic: The Decision Tree (Ternary Operators)
+
+We replaced the single `<Link>` with a logic tree.
+
+**The Hierarchy:**
+
+1.  **Question 1:** Are you logged in? (`user ?`)
+    - **NO:** Show "Login" Link.
+    - **YES:** Go to Question 2.
+2.  **Question 2:** Who are you? (`role === 'admin' ?`)
+    - **ADMIN:** Show "Admin Dashboard".
+    - **CUSTOMER:** Show "My Account".
+
+**The Code Implementation:**
+
+```tsx
+{
+  user ? (
+    // ✅ BRANCH A: USER IS LOGGED IN
+    <>
+      {userProfile?.role === "admin" ? (
+        // SUB-BRANCH A1: ADMIN
+        <Link to="/admin">Admin Dashboard</Link>
+      ) : (
+        // SUB-BRANCH A2: CUSTOMER
+        <Link to="/dashboard">My Account</Link>
+      )}
+
+      {/* COMMON ITEM: LOGOUT BUTTON */}
+      <button onClick={() => logout()}>Logout</button>
+    </>
+  ) : (
+    // ❌ BRANCH B: GUEST
+    <Link to="/login">Login</Link>
+  );
+}
+```
+
+### 32.4 Critical Security Note: UI vs. API
+
+**Important:** Hiding the "Admin Dashboard" button does NOT secure the admin panel.
+
+- **UI Security (What we did here):** Prevents confused users from clicking wrong buttons. It's for **User Experience (UX)**.
+- **Route Security (What we did in Module 3):** Prevents hackers from accessing `/admin` even if they guess the URL.
+
+We did this for **UX**, not just security. It is rude to show a customer an "Admin Login" button they can't use.
+
+### 32.5 Terminology Recap
+
+- **Conditional Rendering:** "If X is true, draw this pixel. If false, draw that pixel."
+- **Ternary Operator (`? :`):** A shorthand `if/else` statement used inside JSX.
+- **Role-Based Access Control (RBAC):** Showing different features based on the `role` property (`admin` vs `customer`).
+- **Fragment (`<>...</>`):** An invisible container. React requires all elements to have one parent. Since we wanted to return _two_ list items (Dashboard Link + Logout Button), we wrapped them in a Fragment.
+
+---
+
+## 🗄️ Module 33: Static vs. Dynamic Architecture (The Portfolio)
+
+**The Student Asked:** _"My portfolio is hardcoded. What does 'connecting to backend' actually mean?"_
+**The Engineer Answered:** _"It means checking the Database for the menu, instead of reading a printed menu card."_
+
+### 33.1 The Current State: "The Printed Menu" (Static)
+
+Right now, your `PortfolioSection.tsx` looks like this:
+
+```tsx
+// ❌ HARDCODED DATA
+const projects = [
+  { id: 1, title: "5KVA System", location: "Delta" },
+  { id: 2, title: "10KVA System", location: "Edo" },
+];
+```
+
+**The Problem:**
+If Kelvin installs a new system in **Lagos** tomorrow:
+
+1.  He calls you (the developer).
+2.  You open VS Code.
+3.  You type the new project into the array.
+4.  You run `npm run build`.
+5.  You deploy to Vercel.
+
+**This is manual labor.** It is not scalable for a business owner.
+
+### 33.2 The Future State: "The Digital Display" (Dynamic)
+
+"Connecting to Backend" means deleting that array and asking Google Firestore instead.
+
+**The Concept:**
+
+1.  **The Vault (Firestore):** We created a `portfolio` collection in the database.
+2.  **The Door (Rules):** We just added `allow read: if true;` so the website can see inside.
+3.  **The Manager (Admin):** Kelvin logs into his Dashboard, uploads a photo, types "Lagos", and clicks "Save".
+
+**The Code Change:**
+
+We will change `PortfolioSection.tsx` from this:
+
+```tsx
+{projects.map((project) => ...)}
+```
+
+To something like this:
+
+```tsx
+// ✅ DYNAMIC FETCH
+const [projects, setProjects] = useState([]);
+
+useEffect(() => {
+  // 1. Phone the Database
+  const unsubscribe = onSnapshot(collection(db, "portfolio"), (snapshot) => {
+    // 2. Unpack the box
+    const liveData = snapshot.docs.map((doc) => doc.data());
+    // 3. Update the screen
+    setProjects(liveData);
+  });
+  return () => unsubscribe();
+}, []);
+```
+
+### 33.3 Why we did the Rules first
+
+You cannot build a bank vault _after_ you put the money in.
+We updated `firestore.rules` **now** (Phase 1) so that the moment we write the code above (Phase 2), the data is already secure.
+
+**The shift is:**
+
+- **Old:** Code = Data.
+- **New:** Code = Instructions on how to _fetch_ Data.
+
+---
+
+## 📞 Module 34: The Contact Page (Controlled Forms & Layouts)
+
+**The Student Asked:** _"How do we capture user data without a database yet, and how do we design a professional form?"_
+**The Engineer Answered:** _"We build a **Controlled Component** and use **CSS Grid** for structure."_
+
+This lesson breaks down the creation of `src/pages/Contact.tsx`.
+
+### 34.1 The Architecture: Hash vs. Route
+
+**The Old Way (`#contact`):**
+
+- **Method:** We used an ID link (`href="#contact"`).
+- **Behavior:** The browser just scrolls down to the footer.
+- **Problem:** It feels cheap. A serious company usually has a dedicated page for inquiries.
+
+**The New Way (`/contact`):**
+
+- **Method:** We used React Router (`<Route path="/contact" ... />`).
+- **Behavior:** The browser unmounts the Home page and mounts a fresh Contact Page.
+- **Benefit:** More space to convince the user to trust us.
+
+### 34.2 The Logic: "Controlled Components"
+
+In HTML, an `<input>` holds its own internal state. In React, **State is King**. We don't verify what the input "has"; we tell the input "what to be."
+
+**The Code:**
+
+```tsx
+// 1. The State (The Source of Truth)
+const [formState, setFormState] = useState({
+  name: "",
+  email: "",
+  message: "",
+});
+
+// 2. The Binding (The Remote Control)
+<input
+  value={formState.name} // 👈 "You only show what I tell you."
+  onChange={(
+    e // 👈 "When user types, update the State first."
+  ) => setFormState({ ...formState, name: e.target.value })}
+/>;
+```
+
+**The Terminology:**
+
+- **Controlled Component:** An input whose value is controlled by React State.
+- **Spread Operator (`...formState`):** Crucial. It means "Copy all existing fields (email, message), THEN only overwrite the `name`."
+  - _If we forgot this, typing in the Name box would delete the Email you just typed!_
+
+### 34.3 The Design: 2-Column Grid
+
+We wanted a "Premium Split" look. Info on the left, Form on the right.
+
+**The CSS Strategy:**
+
+```tsx
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+  {/* Left Column: Info */}
+  <div className="..."><!-- Phone, Email, Address --></div>
+
+  {/* Right Column: Form */}
+  <div className="bg-white ..."><!-- Inputs --></div>
+</div>
+```
+
+**Why Grid?**
+
+- **Mobile First (`grid-cols-1`):** On phones, they stack vertically.
+- **Desktop (`lg:grid-cols-2`):** On large screens, they sit side-by-side.
+- **`gap-12`**: Adds consistent breathing room between the two boxes.
+
+### 34.4 The Animation: Staggered Entrance
+
+We didn't want the form to just "pop" into existence. We used `framer-motion` to slide it in.
+
+```tsx
+// Left Column
+initial={{ x: -30, opacity: 0 }} // Starts 30px to the LEFT
+animate={{ x: 0, opacity: 1 }}   // Slides into place
+
+// Right Column
+initial={{ x: 30, opacity: 0 }}  // Starts 30px to the RIGHT
+animate={{ x: 0, opacity: 1 }}   // Slides into place
+```
+
+**Result:** The two columns slide towards each other ("converge"), creating a subconscious feeling of connection.

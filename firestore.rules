@@ -41,7 +41,11 @@ service cloud.firestore {
                     (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) || isAdmin());
     }
 
-
+    // Portfolio: Public Read, Admin Write
+    match /portfolio/{itemId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
 
     // Products: Public Read, Admin Write
     match /products/{product} {

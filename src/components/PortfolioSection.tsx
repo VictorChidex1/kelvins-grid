@@ -78,13 +78,6 @@ export function PortfolioSection() {
               {/* Overlay Gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-brand-950 via-brand-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
 
-              {/* Location Tag - Updated to Purple/Indigo to match screenshot/brand accent if needed, 
-                  but defaulting to Action color (Gold) variant or Brand Blue for consistency unless user heavily insists on Purple.
-                  Screenshot showed Purple. Let's try a Brand-Action hybrid or just stick to Deep Grid aesthetics.
-                  Actually, user said "maintain app's branding". Purple might be out of place if not used elsewhere.
-                  I'll use a strong Brand-700 or Action mix. 
-                  Let's use a specialized 'Location' badge color. Indigo-600 is close to the screenshot 
-                  and fits well with gold/dark themes. */}
               <div className="absolute bottom-32 left-0 z-20">
                 <div className="bg-[#8B5CF6] text-white py-2 px-6 rounded-r-lg shadow-lg font-medium text-sm backdrop-blur-sm">
                   <span className="block text-xs uppercase opacity-80 tracking-wider mb-0.5">

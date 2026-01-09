@@ -18,7 +18,7 @@ export function Navbar() {
     { name: "Services", href: "/services" },
     { name: "Portfolio", href: "/#portfolio", isHash: true },
     { name: "About", href: "/about", isHash: true },
-    { name: "Contact", href: "/contact", isHash: true },
+    { name: "Contact", href: "/contact", isHash: false },
   ];
 
   const LinkComponent = ({ item, className, onClick }: any) => {
