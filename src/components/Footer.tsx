@@ -9,7 +9,7 @@ export function Footer() {
   const footerLinks = [
     { name: "Services", href: "/services", isHash: false },
     { name: "Portfolio", href: "/#portfolio", isHash: true },
-    { name: "About", href: "/#about", isHash: true },
+    { name: "About", href: "/about", isHash: false },
     { name: "Contact", href: "/contact", isHash: false },
   ];
 

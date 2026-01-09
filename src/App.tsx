@@ -26,6 +26,7 @@ import { MessagesList } from "./pages/admin/MessagesList";
 import { ClientDetail } from "./pages/admin/ClientDetail";
 import { Settings } from "./pages/Settings";
 import { Contact } from "./pages/Contact";
+import { About } from "./pages/About";
 
 import { CustomerDashboard } from "./pages/dashboard/CustomerDashboard";
 import { AuthProvider } from "./context/AuthContext";
@@ -69,6 +70,7 @@ function App() {
               />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
               <Route path="/seed" element={<Seed />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />

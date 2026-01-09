@@ -3079,3 +3079,77 @@ animate={{ x: 0, opacity: 1 }}   // Slides into place
 ```
 
 **Result:** The two columns slide towards each other ("converge"), creating a subconscious feeling of connection.
+
+---
+
+## 📬 Module 35: The Real-Time Admin Inbox
+
+**The Student Asked:** _"How do I see messages instantly? Do I need a refresh button?"_
+**The Engineer Answered:** _"No. We use **WebSockets** (via Firestore Listeners) to keep a live pipe open to the database."_
+
+This lesson explains how we built `src/pages/admin/MessagesList.tsx`.
+
+### 35.1 The Architecture: Pull vs. Push
+
+There are two ways to get data from a database:
+
+1.  **Pull (Fetch/GET):** "Hey Database, give me the list." -> Database gives list -> Connection closes. (Like checking your physical mailbox).
+2.  **Push (Subscribe/Listen):** "Hey Database, **alert me** if anything changes." -> Connection stays open. (Like a chat app).
+
+For the Admin Inbox, we chose **Option 2**. We want to feel "connected" to our customers.
+
+### 35.2 The Logic: `onSnapshot`
+
+In Firestore, the function `onSnapshot` is the listener. It sets up a persistent connection.
+
+**The Code:**
+
+```tsx
+useEffect(() => {
+  // 1. define the query (Messages, ordered by newest first)
+  const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+
+  // 2. Open the "Ear" on the wall
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    // 3. This code runs EVERY TIME the database changes
+    const liveData = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setMessages(liveData); // Update React State
+  });
+
+  // 4. Cleanup (Hang up the phone)
+  return () => unsubscribe();
+}, []);
+```
+
+**Key Terminologies:**
+
+-   **Listener (Observer):** A function that "watches" for changes.
+-   **Unsubscribe:** CRITICAL. When you leave the page (navigate away), you MUST stop listening. If you don't, the app will try to update a screen that doesn't exist, causing memory leaks (and errors).
+    -   *Analogy:* It's like hanging up the phone before you walk out of the room.
+
+### 35.3 The Data Query: Sorting
+
+We didn't just ask for `collection(db, "messages")`. We wrapped it in a `query()`:
+
+```tsx
+orderBy("createdAt", "desc");
+```
+
+-   **`asc` (Ascending):** Oldest to Newest (1, 2, 3...)
+-   **`desc` (Descending):** Newest to Oldest (3, 2, 1...)
+-   We used **desc** so the fresh messages appear at the top.
+
+### 35.4 The UI: "Inbox Zero"
+
+We handle the **Empty State**. A professional app never leaves a blank screen.
+
+```tsx
+{
+  messages.length === 0 && <div ...>No messages yet. Inbox Zero.</div>;
+}
+```
+
+This is called "Conditional Rendering". It gives feedback to the Admin that "Yes, the system works, you just have no mail."
