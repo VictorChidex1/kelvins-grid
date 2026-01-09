@@ -3153,3 +3153,82 @@ We handle the **Empty State**. A professional app never leaves a blank screen.
 ```
 
 This is called "Conditional Rendering". It gives feedback to the Admin that "Yes, the system works, you just have no mail."
+
+---
+
+## 🏛️ Module 36: The Corporate Identity Page (About Us)
+
+**The Student Asked:** _"Why did we change the 'About' link? And why is the CEO's picture so big?"_
+**The Engineer Answered:** _"Navigation defines importance. And in a service business, **People buy People**."_
+
+This lesson explains the construction of `src/pages/About.tsx`.
+
+### 36.1 The Architecture: Hash vs. Route (Part 2)
+
+Previously, "About" was just a section on the Homepage (`/#about`).
+We upgraded it to a dedicated page (`/about`).
+
+**Why?**
+-   **SEO:** Google can index "About Kelvin's Grid" as a separate entity.
+-   **Authority:** You cannot tell a full founder's story in a small scroll-to section.
+-   **Professionalism:** High-ticket clients expect a dedicated corporate profile page.
+
+### 36.2 The Visual Hierarchy: Founder Authority
+
+The design goal was **"The CEO is the Brand."**
+
+**The Code:**
+```tsx
+{/* The Container */}
+<div className="bg-brand-900 ... text-center">
+
+  {/* 1. The Badge (Official Registration) */}
+  <div className="inline-block">
+     <span>KELVIN'S GRID RC NO: 7977365</span>
+  </div>
+
+  {/* 2. The Image (Centerpiece) */}
+  <img src="/images/kelvin-ceo.jpg" className="w-80 h-80 rounded-full" />
+
+  {/* 3. The Name & Title */}
+  <h2>Reuben Kelvin</h2>
+  <p>CEO & Lead Engineer</p>
+
+</div>
+```
+
+**Design Decisions:**
+1.  **The RC Number:** Placing this *above* the image acts like a "Crown" or a "Seal of Legitimacy". It tells the user immediately: "This is a registered, legal engineering firm."
+2.  **Circular Image:** A circle frame focuses the eye on the face (trust). A square frame feels more like a passport photo (bureaucracy).
+3.  **"Lead Engineer"**: We added this to the title. He isn't just a businessman; he gets his hands dirty. That builds trust with technical clients.
+
+### 36.3 The Animation: `whileInView`
+
+In the Core Values section, we used a different animation trigger.
+
+```tsx
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }} // 👈 Magic happens here
+  viewport={{ once: true }}           // 👈 Only animate once
+>
+```
+
+-   **`initial` / `animate`:** Runs instantly when the page loads (like the Hero section).
+-   **`whileInView`:** Runs ONLY when the user scrolls down to that specific section.
+    -   *Why?* If we animated everything at load, the user would miss the cool effects at the bottom of the page before they even scrolled there!
+-   **`viewport={{ once: true }}`:** Ensures that if the user scrolls up and down, the animation doesn't annoyingly replay over and over. It plays once, then stays visible.
+
+### 36.4 The "Grid" Aesthetic
+
+We maintained the brand identity using the "Glass Panel" technique:
+
+```css
+.glass-panel {
+  background: rgba(var(--brand-900), 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--brand-800), 0.5);
+}
+```
+
+This creates a semi-transparent, premium look that sits on top of the deep blue background, consistent with the rest of the site (Contact, Home).

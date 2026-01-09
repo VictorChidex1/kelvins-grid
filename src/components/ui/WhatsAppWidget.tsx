@@ -12,7 +12,7 @@ export function WhatsAppWidget() {
   }, []);
 
   const handleSend = () => {
-    const phoneNumber = "+2348102689080"; // Kelvin's Number
+    const phoneNumber = "+2348102689080";
     const encodedMessage = encodeURIComponent(
       message || "Hello, I'm interested in your services."
     );
