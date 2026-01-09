@@ -68,6 +68,12 @@ export function AdminLayout() {
           >
             Clients
           </Link>
+          <Link
+            to="/admin/messages"
+            className="block px-4 py-2 mt-1 rounded-lg hover:bg-brand-800 text-slate-400 hover:text-white transition-colors"
+          >
+            Messages
+          </Link>
         </nav>
 
         <button

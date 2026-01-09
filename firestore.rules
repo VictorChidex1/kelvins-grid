@@ -47,6 +47,13 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+
+    // Messages: Public Create, Admin Read
+    match /messages/{messageId} {
+      allow create: if true;
+      allow read: if isAdmin();
+    }
+
     // Products: Public Read, Admin Write
     match /products/{product} {
       allow read: if true;

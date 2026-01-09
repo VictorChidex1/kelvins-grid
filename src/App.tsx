@@ -22,6 +22,7 @@ import { ForgotPassword } from "./pages/ForgotPassword";
 import { AdminLayout } from "./components/admin/AdminLayout";
 import { Dashboard } from "./pages/admin/Dashboard";
 import { ClientsList } from "./pages/admin/ClientsList";
+import { MessagesList } from "./pages/admin/MessagesList";
 import { ClientDetail } from "./pages/admin/ClientDetail";
 import { Settings } from "./pages/Settings";
 import { Contact } from "./pages/Contact";
@@ -81,6 +82,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="clients" element={<ClientsList />} />
               <Route path="clients/:userId" element={<ClientDetail />} />
+              <Route path="messages" element={<MessagesList />} />
             </Route>
           </Routes>
         </div>

@@ -1,7 +1,14 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 export function Contact() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -10,10 +17,32 @@ export function Contact() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulation
-    alert("Message sent! (Simulation)");
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      await addDoc(collection(db, "messages"), {
+        ...formState,
+        createdAt: serverTimestamp(),
+        status: "new", // for admin filtering later
+      });
+
+      setSubmitStatus("success");
+      setFormState({
+        name: "",
+        email: "",
+        phone: "",
+        service: "Solar Installation",
+        message: "",
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      setSubmitStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -207,6 +236,49 @@ export function Contact() {
             <h3 className="text-3xl font-bold text-brand-950 mb-8 font-heading">
               Send a Message
             </h3>
+
+            {/* STATUS BANNER */}
+            {submitStatus === "success" && (
+              <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2 animate-in fade-in">
+                <svg
+                  className="w-5 h-5 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <p className="text-sm font-medium">
+                  Message sent successfully! We'll reply shortly.
+                </p>
+              </div>
+            )}
+            {submitStatus === "error" && (
+              <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2 animate-in fade-in">
+                <svg
+                  className="w-5 h-5 shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <p className="text-sm font-medium">
+                  Something went wrong. Please try WhatsApp instead.
+                </p>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -222,6 +294,7 @@ export function Contact() {
                     }
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent outline-none transition-all text-brand-950 font-medium placeholder:text-slate-400"
                     placeholder="John Doe"
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
@@ -237,6 +310,7 @@ export function Contact() {
                     }
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent outline-none transition-all text-brand-950 font-medium placeholder:text-slate-400"
                     placeholder="john@example.com"
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -253,6 +327,7 @@ export function Contact() {
                   }
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent outline-none transition-all text-brand-950 font-medium placeholder:text-slate-400"
                   placeholder="+234..."
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -266,6 +341,7 @@ export function Contact() {
                     setFormState({ ...formState, service: e.target.value })
                   }
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent outline-none transition-all text-brand-950 font-medium"
+                  disabled={isSubmitting}
                 >
                   <option>Solar Installation</option>
                   <option>Starlink Setup</option>
@@ -288,27 +364,35 @@ export function Contact() {
                   }
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-action focus:border-transparent outline-none transition-all text-brand-950 font-medium placeholder:text-slate-400 resize-none"
                   placeholder="Tell us about your project..."
+                  disabled={isSubmitting}
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-action hover:bg-amber-400 text-brand-950 font-bold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-action hover:bg-amber-400 text-brand-950 font-bold py-4 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <span>Send Message</span>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+                {isSubmitting ? (
+                  <span>Sending...</span>
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </>
+                )}
               </button>
             </form>
           </motion.div>
